@@ -2,7 +2,7 @@
   "name": "호철 & 지윤의 신혼여행",
   "short_name": "신혼여행",
   "description": "두바이 + 몰디브 신혼여행 일정표",
-  "start_url": "/index.html",
+  "start_url": "/Hochiri/index.html",
   "display": "standalone",
   "background_color": "#1A2744",
   "theme_color": "#1A2744",
