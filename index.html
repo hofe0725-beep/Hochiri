@@ -965,7 +965,7 @@ function loadAll() {
           }
         } else {
           // 새로 추가된 항목 복원
-          const pMap = {pri-high:'긴급', pri-mid:'보통', pri-low:'여유'};
+          const pMap = {'pri-high':'긴급', 'pri-mid':'보통', 'pri-low':'여유'};
           const pLabel = t.pri === 'pri-high' ? '긴급' : t.pri === 'pri-low' ? '여유' : '보통';
           const div = document.createElement('div');
           div.className = 'todo-item' + (t.done ? ' done-item' : '');
