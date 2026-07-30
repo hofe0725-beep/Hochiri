@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>✈ 호철 & 지윤 신혼여행</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400&family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+:root{
+  --gold:#C9A96E;--gold-light:#E8D5B0;--navy:#1A2744;--navy-mid:#2C3E6B;
+  --sand:#F7F2EA;--teal:#3D8B8B;--coral:#D4704A;--text:#2A2A2A;--muted:#888;
+  --white:#fff;--radius:14px;--edit-hl:rgba(201,169,110,.15);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{font-size:16px;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--sand);color:var(--text);line-height:1.65;min-height:100vh;padding-bottom:80px;}
+
+/* ── TOP BAR ── */
+.topbar{position:sticky;top:0;z-index:100;background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:12px 16px;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.topbar-title{font-size:13px;color:var(--gold-light);letter-spacing:.5px;font-weight:500;}
+.edit-btn-top{background:var(--gold);color:var(--navy);border:none;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+.edit-btn-top.active{background:var(--teal);color:#fff;}
+
+/* ── HERO ── */
+.hero{background:var(--navy);color:#fff;padding:28px 20px 24px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(201,169,110,.2),transparent 60%);}
+.hero-eye{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px;position:relative;}
+.hero h1{font-family:'Noto Serif KR',serif;font-size:24px;font-weight:300;letter-spacing:1px;margin-bottom:4px;position:relative;}
+.hero h1 em{font-style:normal;color:var(--gold-light);}
+.hero-sub{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:16px;position:relative;}
+.hero-badges{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;position:relative;}
+.badge{background:rgba(255,255,255,.08);border:1px solid rgba(201,169,110,.35);border-radius:16px;padding:4px 10px;font-size:11px;color:var(--gold-light);}
+
+/* ── NAV TABS ── */
+.nav-tabs{display:flex;background:var(--navy-mid);padding:0 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.nav-tab{flex-shrink:0;padding:12px 14px;font-size:13px;color:rgba(255,255,255,.55);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;font-weight:500;}
+.nav-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+/* ── SECTIONS ── */
+.section{display:none;padding:16px 14px;}
+.section.active{display:block;}
+
+/* ── FLIGHT CARDS ── */
+.flight-card{background:var(--navy-mid);border-radius:var(--radius);padding:16px;margin-bottom:10px;color:#fff;}
+.flight-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.fc-num{font-size:11px;color:rgba(255,255,255,.4);}
+.fc-code{font-size:16px;font-weight:700;color:var(--gold-light);}
+.fc-status{font-size:11px;}
+.fc-route{display:flex;align-items:center;gap:0;margin-bottom:12px;}
+.fc-airport{font-size:20px;font-weight:700;}
+.fc-arrow-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:0 10px;}
+.fc-line{width:100%;height:1px;background:rgba(201,169,110,.4);}
+.fc-arr{font-size:14px;color:var(--gold);}
+.fc-times{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.fc-time-block{background:rgba(0,0,0,.2);border-radius:8px;padding:8px 10px;}
+.fc-time-label{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
+.fc-time-val{font-size:17px;font-weight:700;color:#fff;letter-spacing:.3px;}
+.fc-time-val.arrival{color:var(--gold-light);}
+
+/* ── TIMETABLE (탭 방식) ── */
+.tt-day-tabs{display:flex;overflow-x:auto;gap:6px;padding-bottom:10px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.tt-day-tabs::-webkit-scrollbar{display:none;}
+.tt-day-tab{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;background:#fff;color:var(--muted);border:1.5px solid #e0d8cc;white-space:nowrap;}
+.tt-day-tab.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+.tt-panel{display:none;}
+.tt-panel.active{display:block;}
+.tt-table-wrap{border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(26,39,68,.1);}
+.tt-tbl{width:100%;border-collapse:collapse;background:#fff;font-size:13px;}
+.tt-tbl th{background:var(--navy);color:#fff;padding:10px 8px;text-align:left;font-weight:600;font-size:12px;}
+.tt-tbl th:first-child{width:56px;text-align:center;background:var(--navy-mid);}
+.tt-tbl td{border-bottom:1px solid #ede7dc;vertical-align:top;height:28px;}
+.tt-tbl td.tc-time{background:#EDE7DB;text-align:center;font-size:11px;font-weight:700;color:var(--navy-mid);width:56px;padding:4px;}
+.tt-tbl td.tc-time.half{background:#F3EEE6;font-weight:400;color:var(--muted);font-size:10px;}
+.tt-tbl td.tc-ev{padding:0;cursor:default;}
+.tt-tbl td.tc-ev.ev-span{padding:3px 5px;vertical-align:middle;}
+body.edit-mode .tt-tbl td.tc-ev:not(.ev-span){cursor:pointer;background:rgba(201,169,110,.04);}
+body.edit-mode .tt-tbl td.tc-ev:not(.ev-span):active{background:rgba(201,169,110,.18);}
+.ev-blk{border-radius:6px;padding:5px 8px;font-size:12px;line-height:1.4;border:1px solid rgba(0,0,0,.07);}
+.ev-blk .evt{font-weight:700;font-size:13px;}
+.ev-blk .evs{font-size:11px;opacity:.75;margin-top:1px;}
+.ev-blk.flight{background:#D6E4F7;color:#1A2744;}
+.ev-blk.hotel{background:#E5DEFA;color:#3B2A7A;}
+.ev-blk.activity{background:#FAE0D5;color:#8B3A1E;}
+.ev-blk.transit{background:#E0E0E0;color:#333;}
+.ev-blk.free{background:#FDF0D5;color:#7A5A1A;}
+.ev-blk.custom{background:#D9F0E8;color:#1A5E3A;}
+.tt-empty{text-align:center;padding:32px 16px;color:var(--muted);font-size:13px;background:#fff;border-radius:10px;}
+
+/* ── DAY CARDS ── */
+.day-card{background:#fff;border-radius:var(--radius);margin-bottom:10px;overflow:hidden;box-shadow:0 2px 8px rgba(26,39,68,.07);}
+.day-hd{display:flex;align-items:center;gap:10px;padding:14px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.day-hd:active{background:rgba(201,169,110,.06);}
+.day-date-blk{flex-shrink:0;}
+.day-lbl{font-size:9px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;}
+.day-date-s{font-size:16px;font-weight:700;color:var(--navy);}
+.day-meta2{flex:1;min-width:0;}
+.day-ttl{font-size:14px;font-weight:500;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.day-sub2{font-size:11px;color:var(--muted);}
+.dtag{font-size:10px;padding:3px 8px;border-radius:10px;flex-shrink:0;}
+.t-dubai{background:#FFF3E0;color:#E6750A;}
+.t-mal{background:#E0F4F4;color:var(--teal);}
+.t-trans{background:#F3F0FF;color:#6B4ECC;}
+.t-ret{background:#F0F4FF;color:var(--navy-mid);}
+.t-tbd{background:#F5F5F5;color:#999;border:1px dashed #ccc;}
+.dtog{font-size:14px;color:var(--gold);flex-shrink:0;transition:transform .2s;}
+.collapsed .dtog{transform:rotate(-90deg);}
+.day-bd{border-top:1px solid rgba(0,0,0,.05);padding:12px 14px 14px;}
+.collapsed .day-bd{display:none;}
+.tbd-notice{background:#F9F9F9;border:1px dashed #ddd;border-radius:8px;padding:14px;font-size:13px;color:#aaa;text-align:center;margin-bottom:10px;}
+
+/* ── TIMELINE ── */
+.tl{position:relative;padding-left:14px;}
+.tl::before{content:'';position:absolute;left:3px;top:6px;bottom:6px;width:1px;background:var(--gold-light);}
+.tl-item{position:relative;margin-bottom:10px;}
+.tl-item:last-child{margin-bottom:0;}
+.tl-item::before{content:'';position:absolute;left:-11px;top:6px;width:8px;height:8px;border-radius:50%;background:var(--gold);border:2px solid #fff;box-shadow:0 0 0 1px var(--gold);}
+.tl-tm{font-size:11px;color:var(--muted);}
+.tl-mn{font-size:14px;color:var(--text);font-weight:500;}
+.tl-sb{font-size:12px;color:var(--muted);margin-top:1px;}
+
+/* ── ALERTS ── */
+.al{border-radius:8px;padding:10px 12px;font-size:13px;margin-top:10px;display:flex;gap:8px;align-items:flex-start;}
+.al-w{background:#FFF8E1;border-left:3px solid #FFC107;}
+.al-i{background:#E8F5F5;border-left:3px solid var(--teal);}
+.al-r{background:#FFF0EE;border-left:3px solid var(--coral);}
+
+/* ── CHECKLIST ── */
+.cl-card{background:#fff;border-radius:var(--radius);padding:16px;margin-bottom:10px;box-shadow:0 2px 8px rgba(26,39,68,.06);}
+.cl-card h4{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--navy-mid);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--gold-light);}
+.ck-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #f0ebe2;line-height:1.5;}
+.ck-item:last-child{border-bottom:none;}
+.ck-box{min-width:22px;height:22px;border:2px solid var(--gold);border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-top:1px;}
+.ck-box.on{background:var(--gold);color:#fff;font-size:13px;}
+.ck-txt{flex:1;font-size:14px;}
+.ck-txt .note{font-size:11px;color:var(--muted);display:block;margin-top:2px;}
+.urgent{color:var(--coral);font-weight:600;}
+
+/* ── COST TABLE ── */
+.cost-wrap{background:#fff;border-radius:var(--radius);padding:16px;box-shadow:0 2px 8px rgba(26,39,68,.06);margin-bottom:10px;}
+.cost-wrap h4{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:12px;}
+.cost-row{display:flex;align-items:flex-start;gap:8px;padding:9px 0;border-bottom:1px solid #f0ebe2;}
+.cost-row:last-child{border-bottom:none;}
+.cost-name{flex:1;font-size:13px;}
+.cost-name .cnote{font-size:11px;color:var(--muted);display:block;margin-top:2px;}
+.cost-amt{font-size:14px;font-weight:700;color:var(--navy);white-space:nowrap;}
+.cbadge{font-size:10px;border-radius:4px;padding:1px 5px;display:block;margin-top:3px;text-align:right;}
+.cbadge.usd{background:#E8F4F0;color:var(--teal);}
+.cbadge.krw{background:#F0F4FF;color:var(--navy-mid);}
+.cost-total-bar{background:var(--navy);border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;margin-top:12px;}
+.cost-total-bar span{font-size:13px;color:rgba(255,255,255,.7);}
+.cost-total-bar strong{font-size:16px;font-weight:700;color:var(--gold-light);}
+
+/* ── TODO ── */
+.todo-wrap{background:#fff;border-radius:var(--radius);padding:16px;box-shadow:0 2px 8px rgba(26,39,68,.06);margin-bottom:10px;}
+.todo-wrap h4{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:12px;}
+.todo-cat-label{font-size:12px;font-weight:700;color:var(--navy-mid);margin:14px 0 6px;padding-left:2px;}
+.todo-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #f0ebe2;}
+.todo-item:last-child{border-bottom:none;}
+.todo-chk{min-width:22px;height:22px;border:2px solid var(--gold);border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;margin-top:1px;}
+.todo-chk.done{background:var(--gold);color:#fff;font-size:12px;}
+.todo-body{flex:1;}
+.todo-txt{font-size:14px;line-height:1.5;}
+.todo-note{font-size:11px;color:var(--muted);display:block;margin-top:2px;}
+.todo-item.done-item .todo-txt{text-decoration:line-through;opacity:.5;}
+.pri-badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;flex-shrink:0;margin-top:3px;}
+.pri-high{background:#FFE5E5;color:#C0392B;}
+.pri-mid{background:#FFF3CD;color:#856404;}
+.pri-low{background:#D4EDDA;color:#155724;}
+
+/* ── EMERGENCY ── */
+.em-card{background:var(--navy);border-radius:var(--radius);padding:16px;margin-bottom:10px;}
+.em-card h4{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--coral);margin-bottom:12px;}
+.em-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.07);}
+.em-row:last-child{border-bottom:none;}
+.em-lbl{font-size:11px;color:rgba(255,255,255,.45);width:78px;flex-shrink:0;}
+.em-val{font-size:13px;color:#fff;font-weight:500;}
+
+/* ── EDIT MODE STYLES ── */
+.ebtn{display:none;border:none;cursor:pointer;border-radius:8px;font-size:12px;padding:6px 10px;font-family:inherit;font-weight:500;}
+body.edit-mode .ebtn{display:inline-flex;align-items:center;gap:3px;}
+.ebtn.del{background:#FFF0EE;color:var(--coral);}
+.ebtn.add{background:#E8F5F5;color:var(--teal);margin-top:10px;width:100%;justify-content:center;padding:10px;}
+.btn-add-day-m{width:100%;padding:14px;background:#fff;border:2px dashed var(--gold-light);border-radius:var(--radius);color:var(--gold);font-size:14px;cursor:pointer;margin-bottom:10px;font-family:inherit;display:none;}
+body.edit-mode .btn-add-day-m{display:block;}
+body.edit-mode [contenteditable]{outline:none;background:var(--edit-hl);border-radius:4px;padding:1px 4px;cursor:text;}
+body.edit-mode [contenteditable]:focus{background:rgba(201,169,110,.3);box-shadow:0 0 0 2px var(--gold);}
+body.edit-mode [contenteditable]:empty::before{content:attr(data-ph);color:#bbb;font-style:italic;}
+body.edit-mode .day-card{border:1.5px solid rgba(201,169,110,.3);}
+.btn-add-cost-m{background:#E8F5F5;color:var(--teal);border:none;padding:10px 16px;border-radius:8px;font-size:13px;cursor:pointer;margin-top:10px;font-family:inherit;width:100%;display:none;}
+body.edit-mode .btn-add-cost-m{display:block;}
+.del-show{display:none;}
+body.edit-mode .del-show{display:block;}
+.todo-del-btn{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;padding:0 4px;display:none;}
+body.edit-mode .todo-del-btn{display:block;}
+.todo-add-form{display:none;flex-direction:column;gap:8px;margin-top:12px;background:var(--sand);border-radius:10px;padding:12px;}
+body.edit-mode .todo-add-form{display:flex;}
+.todo-add-form input,.todo-add-form select{border:1px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;outline:none;background:#fff;}
+.todo-add-form input:focus,.todo-add-form select:focus{border-color:var(--gold);}
+.btn-add-todo-m{background:var(--gold);color:var(--navy);border:none;padding:11px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;}
+
+/* ── BOTTOM SHEET (일정 추가) ── */
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:none;align-items:flex-end;}
+.sheet-overlay.open{display:flex;}
+.sheet{background:#fff;border-radius:20px 20px 0 0;padding:20px 18px 40px;width:100%;max-height:85vh;overflow-y:auto;}
+.sheet-handle{width:36px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 18px;}
+.sheet h3{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:16px;}
+.sheet label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px;margin-top:12px;}
+.sheet input,.sheet select,.sheet textarea{width:100%;border:1px solid #ddd;border-radius:10px;padding:11px 13px;font-size:14px;font-family:inherit;outline:none;-webkit-appearance:none;}
+.sheet input:focus,.sheet select:focus{border-color:var(--gold);}
+.sheet-color-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.sheet-color-row input[type=color]{width:44px;height:40px;border-radius:8px;border:1px solid #ddd;padding:2px;cursor:pointer;}
+.sheet-color-row span{font-size:12px;color:var(--muted);}
+.sheet-btns{display:flex;gap:8px;margin-top:18px;}
+.sheet-btn{flex:1;padding:13px;border-radius:10px;border:none;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;}
+.sheet-btn.ok{background:var(--gold);color:var(--navy);}
+.sheet-btn.cancel{background:#f0f0f0;color:#666;}
+
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--gold-light);padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;white-space:nowrap;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-title">✦ 호철 &amp; 지윤의 신혼여행</div>
+  <button class="edit-btn-top" id="eBtn" onclick="toggleEdit()">✏️ 편집</button>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eye">✦ Honeymoon ✦</div>
+  <h1>호철 &amp; <em>지윤</em></h1>
+  <div class="hero-sub" contenteditable="false">2026. 09. 21 — 09. 29 · 두바이 + 몰디브</div>
+  <div class="hero-badges">
+    <span class="badge">✈ 에미레이트항공</span>
+    <span class="badge">🏨 그랜드하얏트 2박</span>
+    <span class="badge">🌊 오젠 라이프마두 2박</span>
+    <span class="badge">🌴 윈드빌라 2박</span>
+  </div>
+</div>
+
+<!-- NAV TABS -->
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="showSection('flight',this)">✈ 항공</div>
+  <div class="nav-tab" onclick="showSection('timetable',this)">📅 일정표</div>
+  <div class="nav-tab" onclick="showSection('days',this)">🗓 날짜별</div>
+  <div class="nav-tab" onclick="showSection('checklist',this)">✅ 체크리스트</div>
+  <div class="nav-tab" onclick="showSection('budget',this)">💰 예산</div>
+  <div class="nav-tab" onclick="showSection('todo',this)">📋 할일</div>
+  <div class="nav-tab" onclick="showSection('emergency',this)">🚨 긴급</div>
+</div>
+
+<!-- ══════════════════
+     FLIGHT
+══════════════════ -->
+<div class="section active" id="sec-flight">
+
+  <div class="flight-card">
+    <div class="flight-card-top">
+      <span class="fc-num">편 1</span>
+      <span class="fc-code" contenteditable="false">EK323</span>
+      <span class="fc-status ok">✔ 정상</span>
+    </div>
+    <div class="fc-route">
+      <div class="fc-airport" contenteditable="false">인천</div>
+      <div class="fc-arrow-wrap"><div class="fc-line"></div><div class="fc-arr">→</div><div class="fc-line"></div></div>
+      <div class="fc-airport" contenteditable="false">두바이</div>
+    </div>
+    <div class="fc-times">
+      <div class="fc-time-block">
+        <div class="fc-time-label">출발</div>
+        <div class="fc-time-val" contenteditable="false">09/21 23:55</div>
+      </div>
+      <div class="fc-time-block">
+        <div class="fc-time-label">도착</div>
+        <div class="fc-time-val arrival" contenteditable="false">09/22 04:25</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flight-card">
+    <div class="flight-card-top">
+      <span class="fc-num">편 2</span>
+      <span class="fc-code" contenteditable="false">EK658</span>
+      <span class="fc-status ok">✔ 정상</span>
+    </div>
+    <div class="fc-route">
+      <div class="fc-airport" contenteditable="false">두바이</div>
+      <div class="fc-arrow-wrap"><div class="fc-line"></div><div class="fc-arr">→</div><div class="fc-line"></div></div>
+      <div class="fc-airport" contenteditable="false">몰디브</div>
+    </div>
+    <div class="fc-times">
+      <div class="fc-time-block">
+        <div class="fc-time-label">출발</div>
+        <div class="fc-time-val" contenteditable="false">09/24 04:20</div>
+      </div>
+      <div class="fc-time-block">
+        <div class="fc-time-label">도착</div>
+        <div class="fc-time-val arrival" contenteditable="false">09/24 09:30</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flight-card" style="border:1px solid rgba(212,112,74,.4);">
+    <div class="flight-card-top">
+      <span class="fc-num">편 3</span>
+      <span class="fc-code" contenteditable="false">EK659</span>
+      <span class="fc-status changed">▲ 변경됨</span>
+    </div>
+    <div class="fc-route">
+      <div class="fc-airport" contenteditable="false">몰디브</div>
+      <div class="fc-arrow-wrap"><div class="fc-line"></div><div class="fc-arr">→</div><div class="fc-line"></div></div>
+      <div class="fc-airport" contenteditable="false">두바이</div>
+    </div>
+    <div class="fc-times">
+      <div class="fc-time-block">
+        <div class="fc-time-label">출발</div>
+        <div class="fc-time-val" contenteditable="false">09/28 11:15</div>
+      </div>
+      <div class="fc-time-block">
+        <div class="fc-time-label">도착</div>
+        <div class="fc-time-val arrival" contenteditable="false">09/28 14:15</div>
+      </div>
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:rgba(255,255,255,.6);background:rgba(212,112,74,.15);border-radius:8px;padding:8px 10px;">⚠️ 기존 EK661 (18:25) → EK659 (11:15)로 변경. 마이리얼트립 결제 요청 필수.</div>
+  </div>
+
+  <div class="flight-card">
+    <div class="flight-card-top">
+      <span class="fc-num">편 4</span>
+      <span class="fc-code" contenteditable="false">EK322</span>
+      <span class="fc-status ok">✔ 정상</span>
+    </div>
+    <div class="fc-route">
+      <div class="fc-airport" contenteditable="false">두바이</div>
+      <div class="fc-arrow-wrap"><div class="fc-line"></div><div class="fc-arr">→</div><div class="fc-line"></div></div>
+      <div class="fc-airport" contenteditable="false">인천</div>
+    </div>
+    <div class="fc-times">
+      <div class="fc-time-block">
+        <div class="fc-time-label">출발</div>
+        <div class="fc-time-val" contenteditable="false">09/29 03:40</div>
+      </div>
+      <div class="fc-time-block">
+        <div class="fc-time-label">도착</div>
+        <div class="fc-time-val arrival" contenteditable="false">09/29 17:00</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════
+     TIMETABLE
+══════════════════ -->
+<div class="section" id="sec-timetable">
+  <div class="tt-day-tabs" id="tt-day-tabs"></div>
+  <div id="tt-panels"></div>
+  <p style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;">💡 편집 모드에서 빈 칸 탭 → 일정 추가</p>
+</div>
+
+<!-- ══════════════════
+     DAYS
+══════════════════ -->
+<div class="section" id="sec-days">
+
+  <div class="day-card" id="d0921">
+    <div class="day-hd" onclick="dtog(event,'d0921')">
+      <div class="day-date-blk"><div class="day-lbl">Day</div><div class="day-date-s" contenteditable="false">9/21 (월)</div></div>
+      <div class="day-meta2"><div class="day-ttl" contenteditable="false">인천 출발</div><div class="day-sub2" contenteditable="false">EK323 23:55</div></div>
+      <span class="dtag t-trans" contenteditable="false">이동</span>
+      <button class="ebtn del" onclick="delCard(event,'d0921')" style="margin-left:6px;">🗑</button>
+      <span class="dtog">▾</span>
+    </div>
+    <div class="day-bd">
+      <div class="tl" id="tl0921">
+        <div class="tl-item"><div class="tl-tm" contenteditable="false">저녁</div><div class="tl-mn" contenteditable="false">공항 개별 수속</div><div class="tl-sb" contenteditable="false">여행서류·여권·이티켓 지참</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+        <div class="tl-item"><div class="tl-tm" contenteditable="false">23:55</div><div class="tl-mn" contenteditable="false">EK323 인천 출발 → 두바이</div><div class="tl-sb" contenteditable="false">두바이 도착 09/22 04:25</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+      </div>
+      <button class="ebtn add" onclick="aI('tl0921')">＋ 일정 추가</button>
+      <div class="al al-i"><span>💡</span><div contenteditable="false">출발 주 초 허니문리조트 이메일 확인 필수.</div></div>
+    </div>
+  </div>
+
+  <div class="day-card" id="d0922">
+    <div class="day-hd" onclick="dtog(event,'d0922')">
+      <div class="day-date-blk"><div class="day-lbl">Day</div><div class="day-date-s" contenteditable="false">9/22 (화)</div></div>
+      <div class="day-meta2"><div class="day-ttl" contenteditable="false">두바이 도착 / 체크인</div><div class="day-sub2" contenteditable="false">그랜드하얏트 두바이</div></div>
+      <span class="dtag t-dubai" contenteditable="false">두바이</span>
+      <button class="ebtn del" onclick="delCard(event,'d0922')" style="margin-left:6px;">🗑</button>
+      <span class="dtog">▾</span>
+    </div>
+    <div class="day-bd">
+      <div class="tl" id="tl0922">
+        <div class="tl-item"><div class="tl-tm" contenteditable="false">04:25</div><div class="tl-mn" contenteditable="false">두바이 공항 도착 · 입국심사</div><div class="tl-sb" contenteditable="false">3번 출구 픽업 대기</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+        <div class="tl-item"><div class="tl-tm" contenteditable="false">입국 후</div><div class="tl-mn" contenteditable="false">그랜드하얏트 체크인</div><div class="tl-sb" contenteditable="false">바우처+여권 / 보증금 $100~150 / 관광세 AED 20</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+        <div class="tl-item"><div class="tl-tm" contenteditable="false">자유</div><div class="tl-mn" contenteditable="false">두바이 자유 관광</div><div class="tl-sb" contenteditable="false">일정 추가 예정</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+      </div>
+      <button class="ebtn add" onclick="aI('tl0922')">＋ 일정 추가</button>
+      <div class="al al-w"><span>⚠️</span><div contenteditable="false">드라이버 팁 커플당 $5 권장</div></div>
+    </div>
+  </div>
+
+  <div class="day-card" id="d0923">
+    <div class="day-hd" onclick="dtog(event,'d0923')">
+      <div class="day-date-blk"><div class="day-lbl">Day</div><div class="day-date-s" contenteditable="false">9/23 (수)</div></div>
+      <div class="day-meta2"><div class="day-ttl" contenteditable="false">두바이 자유</div><div class="day-sub2" contenteditable="false">사막투어 등 — 미정</div></div>
+      <span class="dtag t-dubai" contenteditable="false">두바이</span>
+      <button class="ebtn del" onclick="delCard(event,'d0923')" style="margin-left:6px;">🗑</button>
+      <span class="dtog">▾</span>
+    </div>
+    <div class="day-bd">
+      <div class="tbd-notice" id="tbd0923">📌 세부 일정 미정</div>
+      <div class="tl" id="tl0923"></div>
+      <button class="ebtn add" onclick="aI('tl0923')">＋ 일정 추가</button>
+      <div class="al al-i"><span>🏜️</span><div contenteditable="false">사막투어 당일 10시 카카오톡 픽업 시간 확인. 10분 전 호텔 1층 대기.</div></div>
+    </div>
+  </div>
+
+  <div class="day-card" id="d0924">
+    <div class="day-hd" onclick="dtog(event,'d0924')">
+      <div class="day-date-blk"><div class="day-lbl">Day</div><div class="day-date-s" contenteditable="false">9/24 (목)</div></div>
+      <div class="day-meta2"><div class="day-ttl" contenteditable="false">두바이 → 몰디브</div><div class="day-sub2" contenteditable="false">EK658 04:20 출발</div></div>
+      <span class="dtag t-trans" contenteditable="false">이동</span>
+      <button class="ebtn del" onclick="delCard(event,'d0924')" style="margin-left:6px;">🗑</button>
+      <span class="dtog">▾</span>
+    </div>
+    <div class="day-bd">
+      <div class="tl" id="tl0924">
+        <div class="tl-item"><div class="tl-tm" contenteditable="false">04:20</div><div class="tl-mn" contenteditable="false">EK658 두바이 출발 → 몰디브 09:30</div><div class="tl-sb" contenteditable="false">IMUGA QR 제시 / 주류 반입 금지</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+        <div class="tl-item"><div class="tl-tm" contenteditable="false">09:30~</div><div class="tl-mn" contenteditable="false">오젠 라이프마두 체크인</div><div class="tl-sb" contenteditable="false">신용카드 보증금 / 청첩장 → 허니문 베네핏</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+      </div>
+      <button class="ebtn add" onclick="aI('tl0924')">＋ 일정 추가</button>
+      <div class="al al-r"><span>🚨</span><div contenteditable="false">비행 직후 바다 수영 절대 금지. 충분한 휴식 후 해양 활동 시작.</div></div>
+    </div>
+  </div>
+
+  <div class="day-card" id="d0925"><div class="day-hd" onclick="dtog(event,'d0925')"><div class="day-date-blk"><div class="day-lbl">Day</div><div class="day-date-s" contenteditable="false">9/25 (금)</div></div><div class="day-meta2"><div class="day-ttl" contenteditable="false">몰디브 자유 — 오젠</div><div class="day-sub2" contenteditable="false">일정 미정</div></div><span class="dtag t-mal" contenteditable="false">몰디브</span><button class="ebtn del" onclick="delCard(event,'d0925')" style="margin-left:6px;">🗑</button><span class="dtog">▾</span></div><div class="day-bd"><div class="tbd-notice" id="tbd0925">📌 일정 미정</div><div class="tl" id="tl0925"></div><button class="ebtn add" onclick="aI('tl0925')">＋ 일정 추가</button></div></div>
+
+  <div class="day-card" id="d0926"><div class="day-hd" onclick="dtog(event,'d0926')"><div class="day-date-blk"><div class="day-lbl">Day</div><div class="day-date-s" contenteditable="false">9/26 (토)</div></div><div class="day-meta2"><div class="day-ttl" contenteditable="false">몰디브 자유 — 오젠</div><div class="day-sub2" contenteditable="false">일정 미정</div></div><span class="dtag t-mal" contenteditable="false">몰디브</span><button class="ebtn del" onclick="delCard(event,'d0926')" style="margin-left:6px;">🗑</button><span class="dtog">▾</span></div><div class="day-bd"><div class="tbd-notice" id="tbd0926">📌 일정 미정</div><div class="tl" id="tl0926"></div><button class="ebtn add" onclick="aI('tl0926')">＋ 일정 추가</button></div></div>
+
+  <div class="day-card" id="d0927"><div class="day-hd" onclick="dtog(event,'d0927')"><div class="day-date-blk"><div class="day-lbl">Day</div><div class="day-date-s" contenteditable="false">9/27 (일)</div></div><div class="day-meta2"><div class="day-ttl" contenteditable="false">몰디브 자유 — 윈드빌라</div><div class="day-sub2" contenteditable="false">일정 미정</div></div><span class="dtag t-mal" contenteditable="false">몰디브</span><button class="ebtn del" onclick="delCard(event,'d0927')" style="margin-left:6px;">🗑</button><span class="dtog">▾</span></div><div class="day-bd"><div class="tbd-notice" id="tbd0927">📌 일정 미정</div><div class="tl" id="tl0927"></div><button class="ebtn add" onclick="aI('tl0927')">＋ 일정 추가</button><div class="al al-r"><span>⛔</span><div contenteditable="false">체크아웃 전날(9/27)부터 다이빙 금지 (비행 24h 이내).</div></div></div></div>
+
+  <div class="day-card" id="d0928">
+    <div class="day-hd" onclick="dtog(event,'d0928')">
+      <div class="day-date-blk"><div class="day-lbl">Day</div><div class="day-date-s" contenteditable="false">9/28 (월)</div></div>
+      <div class="day-meta2"><div class="day-ttl" contenteditable="false">몰디브 → 두바이 경유</div><div class="day-sub2" contenteditable="false">EK659 11:15 ⚠️변경편</div></div>
+      <span class="dtag t-trans" contenteditable="false">이동</span>
+      <button class="ebtn del" onclick="delCard(event,'d0928')" style="margin-left:6px;">🗑</button>
+      <span class="dtog">▾</span>
+    </div>
+    <div class="day-bd">
+      <div class="tl" id="tl0928">
+        <div class="tl-item"><div class="tl-tm" contenteditable="false">11:15</div><div class="tl-mn" contenteditable="false">EK659 몰디브 출발 ⚠️ 변경편</div><div class="tl-sb" contenteditable="false">기존 EK661(18:25)→EK659(11:15). 마이리얼트립 결제 완료 필수.</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+        <div class="tl-item"><div class="tl-tm" contenteditable="false">14:15</div><div class="tl-mn" contenteditable="false">두바이 도착 → 경유 대기</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+      </div>
+      <button class="ebtn add" onclick="aI('tl0928')">＋ 일정 추가</button>
+      <div class="al al-r"><span>🔴</span><div contenteditable="false">마이리얼트립 마이페이지 결제 요청 및 발권 완료 확인 필수.</div></div>
+    </div>
+  </div>
+
+  <div class="day-card" id="d0929">
+    <div class="day-hd" onclick="dtog(event,'d0929')">
+      <div class="day-date-blk"><div class="day-lbl">Day</div><div class="day-date-s" contenteditable="false">9/29 (화)</div></div>
+      <div class="day-meta2"><div class="day-ttl" contenteditable="false">두바이 → 인천 귀국</div><div class="day-sub2" contenteditable="false">EK322 03:40 출발</div></div>
+      <span class="dtag t-ret" contenteditable="false">귀국</span>
+      <button class="ebtn del" onclick="delCard(event,'d0929')" style="margin-left:6px;">🗑</button>
+      <span class="dtog">▾</span>
+    </div>
+    <div class="day-bd">
+      <div class="tl" id="tl0929">
+        <div class="tl-item"><div class="tl-tm" contenteditable="false">03:40</div><div class="tl-mn" contenteditable="false">EK322 두바이 출발 → 인천 17:00 🎉</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+      </div>
+      <button class="ebtn add" onclick="aI('tl0929')">＋ 일정 추가</button>
+    </div>
+  </div>
+
+  <button class="btn-add-day-m" onclick="addDay()">＋ 새 날짜 추가</button>
+</div>
+
+<!-- ══════════════════
+     CHECKLIST
+══════════════════ -->
+<div class="section" id="sec-checklist">
+  <div class="cl-card">
+    <h4>📋 서류 / 필수</h4>
+    <div id="cl1">
+      <div class="ck-item"><div class="ck-box" onclick="ck(this)"></div><div class="ck-txt" contenteditable="false">여권 유효기간 확인<span class="note urgent">2027.03.21 이후</span></div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+      <div class="ck-item"><div class="ck-box" onclick="ck(this)"></div><div class="ck-txt" contenteditable="false">IMUGA 작성+QR 발급<span class="note urgent">출발 96시간 이내 (9/18~)</span></div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+      <div class="ck-item"><div class="ck-box" onclick="ck(this)"></div><div class="ck-txt" contenteditable="false">이티켓 캡처 → 허니문리조트 전송</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+      <div class="ck-item"><div class="ck-box" onclick="ck(this)"></div><div class="ck-txt" contenteditable="false">호텔 바우처 출력/저장</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+      <div class="ck-item"><div class="ck-box" onclick="ck(this)"></div><div class="ck-txt" contenteditable="false">종이 청첩장 1장<span class="note">몰디브 허니문 베네핏</span></div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+    </div>
+    <button class="ebtn add" onclick="aCk('cl1')">＋ 항목 추가</button>
+  </div>
+  <div class="cl-card">
+    <h4>💳 결제</h4>
+    <div id="cl2">
+      <div class="ck-item"><div class="ck-box" onclick="ck(this)"></div><div class="ck-txt" contenteditable="false">해외겸용 신용카드 (체크카드 ❌)</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+      <div class="ck-item"><div class="ck-box" onclick="ck(this)"></div><div class="ck-txt" contenteditable="false">잔금 납부<span class="note urgent">≈ 8/7까지</span></div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+      <div class="ck-item"><div class="ck-box" onclick="ck(this)"></div><div class="ck-txt" contenteditable="false">달러 현금 (팁용)</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+      <div class="ck-item"><div class="ck-box" onclick="ck(this)"></div><div class="ck-txt" contenteditable="false">마이리얼트립 EK659 결제 완료<span class="note urgent">긴급</span></div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+    </div>
+    <button class="ebtn add" onclick="aCk('cl2')">＋ 항목 추가</button>
+  </div>
+  <div class="cl-card">
+    <h4>🎽 짐</h4>
+    <div id="cl3">
+      <div class="ck-item"><div class="ck-box" onclick="ck(this)"></div><div class="ck-txt" contenteditable="false">아쿠아슈즈</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+      <div class="ck-item"><div class="ck-box" onclick="ck(this)"></div><div class="ck-txt" contenteditable="false">자외선 차단제</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+      <div class="ck-item"><div class="ck-box" onclick="ck(this)"></div><div class="ck-txt" contenteditable="false">주류·농수산물 미반입 확인</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+      <div class="ck-item"><div class="ck-box" onclick="ck(this)"></div><div class="ck-txt" contenteditable="false">전자담배 미소지</div><button class="ebtn del" onclick="dI(event,this)">✕</button></div>
+    </div>
+    <button class="ebtn add" onclick="aCk('cl3')">＋ 항목 추가</button>
+  </div>
+</div>
+
+<!-- ══════════════════
+     BUDGET
+══════════════════ -->
+<div class="section" id="sec-budget">
+  <div class="cost-wrap">
+    <h4>💰 지출 내역</h4>
+    <div id="cost-list">
+      <div class="cost-row" data-cur="USD" data-amt="5992"><div class="cost-name">리조트 패키지 (2인)<span class="cnote">두바이+몰디브 2 리조트</span></div><div style="text-align:right"><div class="cost-amt" contenteditable="false">$5,992</div><span class="cbadge usd">USD</span></div><button class="ebtn del del-show" onclick="delCostRow(event,this)">✕</button></div>
+      <div class="cost-row" data-cur="KRW" data-amt="2972200"><div class="cost-name">항공권 (2인)<span class="cnote">에미레이트항공 / 마이리얼트립</span></div><div style="text-align:right"><div class="cost-amt" contenteditable="false">₩2,972,200</div><span class="cbadge krw">KRW</span></div><button class="ebtn del del-show" onclick="delCostRow(event,this)">✕</button></div>
+      <div class="cost-row" data-cur="KRW" data-amt="400000"><div class="cost-name">계약금<span class="cnote">허니문리조트 / 납부 완료</span></div><div style="text-align:right"><div class="cost-amt" contenteditable="false">₩400,000</div><span class="cbadge krw">KRW</span></div><button class="ebtn del del-show" onclick="delCostRow(event,this)">✕</button></div>
+      <div class="cost-row" data-cur="USD" data-amt="150"><div class="cost-name">두바이 현장결제<span class="cnote">보증금 $100~150 (환불) + 관광세</span></div><div style="text-align:right"><div class="cost-amt" contenteditable="false">$100~150</div><span class="cbadge usd">USD</span></div><button class="ebtn del del-show" onclick="delCostRow(event,this)">✕</button></div>
+      <div class="cost-row" data-cur="USD" data-amt="50"><div class="cost-name">팁<span class="cnote">드라이버·사막투어 커플당 $5</span></div><div style="text-align:right"><div class="cost-amt" contenteditable="false">$50 예상</div><span class="cbadge usd">USD</span></div><button class="ebtn del del-show" onclick="delCostRow(event,this)">✕</button></div>
+    </div>
+    <div class="cost-total-bar"><span>총 합계 (KRW 환산)</span><strong id="ctotal">계산 중...</strong></div>
+    <p style="font-size:11px;color:var(--muted);margin-top:8px;">* USD 1 ≈ 1,380원 기준</p>
+    <button class="btn-add-cost-m" onclick="addCostRow()">＋ 비용 추가</button>
+  </div>
+</div>
+
+<!-- ══════════════════
+     TODO
+══════════════════ -->
+<div class="section" id="sec-todo">
+  <div class="todo-wrap">
+    <h4>📋 할 일 &amp; 준비사항</h4>
+    <div class="todo-cat-label">✈ 항공 / 교통</div>
+    <div id="todo-flight">
+      <div class="todo-item" id="ti1"><div class="todo-chk" onclick="toggleTodo('ti1')"></div><div class="todo-body"><div class="todo-txt">부산 → 인천 이동편 예매 (KTX 또는 항공)</div><span class="todo-note">EK323 탑승 전 인천공항 도착 여유있게</span></div><span class="pri-badge pri-high">긴급</span><button class="todo-del-btn" onclick="delTodo('ti1')">✕</button></div>
+    </div>
+    <div class="todo-cat-label">📄 서류 / 행정</div>
+    <div id="todo-docs">
+      <div class="todo-item" id="ti2"><div class="todo-chk" onclick="toggleTodo('ti2')"></div><div class="todo-body"><div class="todo-txt">몰디브 IMUGA 전자 신고서 작성</div><span class="todo-note">출발 96시간 이내 (9/18 이후) → QR코드 발급</span></div><span class="pri-badge pri-high">긴급</span><button class="todo-del-btn" onclick="delTodo('ti2')">✕</button></div>
+      <div class="todo-item" id="ti3"><div class="todo-chk" onclick="toggleTodo('ti3')"></div><div class="todo-body"><div class="todo-txt">마이리얼트립 EK659 결제 완료</div><span class="todo-note">마이페이지 결제 요청 → 발권 확인</span></div><span class="pri-badge pri-high">긴급</span><button class="todo-del-btn" onclick="delTodo('ti3')">✕</button></div>
+      <div class="todo-item" id="ti4"><div class="todo-chk" onclick="toggleTodo('ti4')"></div><div class="todo-body"><div class="todo-txt">허니문리조트 잔금 납부</div><span class="todo-note">출발 45일 전 ≈ 8월 7일까지</span></div><span class="pri-badge pri-mid">보통</span><button class="todo-del-btn" onclick="delTodo('ti4')">✕</button></div>
+    </div>
+    <div class="todo-cat-label">🎒 준비 / 쇼핑</div>
+    <div id="todo-prep">
+      <div class="todo-item" id="ti5"><div class="todo-chk" onclick="toggleTodo('ti5')"></div><div class="todo-body"><div class="todo-txt">달러 환전</div><span class="todo-note">팁용 $50~100</span></div><span class="pri-badge pri-mid">보통</span><button class="todo-del-btn" onclick="delTodo('ti5')">✕</button></div>
+      <div class="todo-item" id="ti6"><div class="todo-chk" onclick="toggleTodo('ti6')"></div><div class="todo-body"><div class="todo-txt">아쿠아슈즈 구매</div><span class="todo-note">몰디브 산호 보호용</span></div><span class="pri-badge pri-low">여유</span><button class="todo-del-btn" onclick="delTodo('ti6')">✕</button></div>
+      <div class="todo-item" id="ti7"><div class="todo-chk" onclick="toggleTodo('ti7')"></div><div class="todo-body"><div class="todo-txt">여행자보험 증서 저장</div><span class="todo-note">메리츠화재 1억원</span></div><span class="pri-badge pri-mid">보통</span><button class="todo-del-btn" onclick="delTodo('ti7')">✕</button></div>
+    </div>
+    <!-- 편집 모드 추가 폼 -->
+    <div class="todo-add-form" id="taform">
+      <input type="text" id="ta-txt" placeholder="할 일 입력">
+      <input type="text" id="ta-note" placeholder="메모 (선택)">
+      <select id="ta-cat">
+        <option value="todo-flight">✈ 항공/교통</option>
+        <option value="todo-docs">📄 서류/행정</option>
+        <option value="todo-prep">🎒 준비/쇼핑</option>
+      </select>
+      <select id="ta-pri">
+        <option value="high">🔴 긴급</option>
+        <option value="mid" selected>🟡 보통</option>
+        <option value="low">🟢 여유</option>
+      </select>
+      <button class="btn-add-todo-m" onclick="addTodo()">＋ 추가</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════
+     EMERGENCY
+══════════════════ -->
+<div class="section" id="sec-emergency">
+  <div class="em-card">
+    <h4>🚨 비상 연락</h4>
+    <div class="em-row"><span class="em-lbl">허니문리조트</span><span class="em-val" contenteditable="false">051-747-8255</span></div>
+    <div class="em-row"><span class="em-lbl">담당자</span><span class="em-val" contenteditable="false">김나정 실장</span></div>
+    <div class="em-row"><span class="em-lbl">관광불편</span><span class="em-val" contenteditable="false">1588-8692</span></div>
+    <div class="em-row"><span class="em-lbl">마이리얼트립</span><span class="em-val" contenteditable="false">flights@myrealtrip.com</span></div>
+    <div class="em-row"><span class="em-lbl">예약번호</span><span class="em-val" contenteditable="false">E5RZWB</span></div>
+    <div class="em-row"><span class="em-lbl">보험사</span><span class="em-val" contenteditable="false">메리츠화재 1억원</span></div>
+  </div>
+</div>
+
+<!-- BOTTOM SHEET -->
+<div class="sheet-overlay" id="sheet">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <h3>＋ 일정 추가</h3>
+    <label>일정 이름</label>
+    <input type="text" id="s-title" placeholder="예: 부르즈칼리파 방문">
+    <label>세부 내용 (선택)</label>
+    <input type="text" id="s-sub" placeholder="예: 입장권 사전 예매 필요">
+    <label>종류</label>
+    <select id="s-type" onchange="onTypeChange()">
+      <option value="flight">✈ 항공</option>
+      <option value="hotel">🏨 숙박</option>
+      <option value="activity" selected>🎯 액티비티</option>
+      <option value="transit">🚗 이동</option>
+      <option value="free">☀️ 자유</option>
+      <option value="custom">✏️ 기타 (직접 입력)</option>
+    </select>
+    <div id="s-custom-row" style="display:none">
+      <label>기타 이름</label>
+      <input type="text" id="s-custom" placeholder="예: 식사, 쇼핑">
+    </div>
+    <label>색상 지정</label>
+    <div class="sheet-color-row">
+      <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">배경</div><input type="color" id="s-bg" value="#FAE0D5"></div>
+      <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px;">텍스트</div><input type="color" id="s-tc" value="#8B3A1E"></div>
+      <button onclick="resetSheetColors()" style="font-size:11px;background:#f0f0f0;border:none;border-radius:6px;padding:6px 10px;cursor:pointer;align-self:flex-end;">초기화</button>
+    </div>
+    <label>종료 시간 (선택 — 구간 자동 병합)</label>
+    <input type="text" id="s-end" placeholder="예: 09:30">
+    <div class="sheet-btns">
+      <button class="sheet-btn cancel" onclick="closeSheet()">취소</button>
+      <button class="sheet-btn ok" onclick="confirmSheet()">추가</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✔ 저장됨</div>
+
+<script>
+// ── SECTION TABS
+function showSection(id,el){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  el.classList.add('active');
+  el.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+}
+
+// ── EDIT MODE
+let editMode=false;
+function toggleEdit(){
+  editMode=!editMode;
+  document.body.classList.toggle('edit-mode',editMode);
+  const btn=document.getElementById('eBtn');
+  document.querySelectorAll('[contenteditable]').forEach(el=>el.setAttribute('contenteditable',editMode?'true':'false'));
+  btn.textContent=editMode?'✅ 완료':'✏️ 편집';
+  btn.classList.toggle('active',editMode);
+  if(!editMode)showToast('저장됨 ✔');
+}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg||'✔';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+
+// ── TIMETABLE
+const SLOTS=[];
+for(let h=0;h<24;h++){SLOTS.push({l:pad(h)+':00',h,m:0,isH:true});SLOTS.push({l:pad(h)+':30',h,m:30,isH:false});}
+function pad(n){return String(n).padStart(2,'0');}
+function slotIdx(h,m){return h*2+(m>=30?1:0);}
+
+const DAYS=[
+  {date:'9/21 (월)',label:'21일',tbId:'tt-d0'},
+  {date:'9/22 (화)',label:'22일',tbId:'tt-d1'},
+  {date:'9/23 (수)',label:'23일',tbId:'tt-d2'},
+  {date:'9/24 (목)',label:'24일',tbId:'tt-d3'},
+  {date:'9/25 (금)',label:'25일',tbId:'tt-d4'},
+  {date:'9/26 (토)',label:'26일',tbId:'tt-d5'},
+  {date:'9/27 (일)',label:'27일',tbId:'tt-d6'},
+  {date:'9/28 (월)',label:'28일',tbId:'tt-d7'},
+  {date:'9/29 (화)',label:'29일',tbId:'tt-d8'},
+];
+
+// events: dayIdx -> [{si, span, title, sub, type, bg, tc}]
+const EV={
+  0:[{si:slotIdx(23,30),span:1,title:'✈ EK323 탑승·출발',sub:'인천→두바이 23:55',type:'flight',bg:'#D6E4F7',tc:'#1A2744'}],
+  1:[
+    {si:slotIdx(0,0),span:9,title:'✈ EK323 기내',sub:'인천→두바이',type:'flight',bg:'#D6E4F7',tc:'#1A2744'},
+    {si:slotIdx(4,30),span:2,title:'🛬 두바이 도착',sub:'04:25 / 입국·픽업',type:'hotel',bg:'#E5DEFA',tc:'#3B2A7A'},
+    {si:slotIdx(8,0),span:2,title:'🏨 그랜드하얏트 체크인',sub:'자유 시간',type:'hotel',bg:'#E5DEFA',tc:'#3B2A7A'},
+  ],
+  3:[
+    {si:slotIdx(4,0),span:1,title:'✈ EK658 탑승·출발',sub:'두바이→몰디브 04:20',type:'flight',bg:'#D6E4F7',tc:'#1A2744'},
+    {si:slotIdx(4,30),span:10,title:'✈ EK658 기내',sub:'두바이→몰디브',type:'flight',bg:'#D6E4F7',tc:'#1A2744'},
+    {si:slotIdx(9,30),span:2,title:'🛬 몰디브 도착',sub:'09:30 / 리조트 체크인',type:'hotel',bg:'#E5DEFA',tc:'#3B2A7A'},
+  ],
+  7:[
+    {si:slotIdx(11,0),span:1,title:'✈ EK659 탑승·출발',sub:'몰디브→두바이 11:15 ⚠️변경',type:'flight',bg:'#D6E4F7',tc:'#1A2744'},
+    {si:slotIdx(11,30),span:6,title:'✈ EK659 기내',sub:'몰디브→두바이',type:'flight',bg:'#D6E4F7',tc:'#1A2744'},
+    {si:slotIdx(14,0),span:2,title:'🛬 두바이 도착',sub:'14:15 / 경유 대기',type:'transit',bg:'#E0E0E0',tc:'#333'},
+  ],
+  8:[
+    {si:slotIdx(3,30),span:1,title:'✈ EK322 탑승·출발',sub:'두바이→인천 03:40',type:'flight',bg:'#D6E4F7',tc:'#1A2744'},
+    {si:slotIdx(4,0),span:26,title:'✈ EK322 기내',sub:'두바이→인천',type:'flight',bg:'#D6E4F7',tc:'#1A2744'},
+    {si:slotIdx(17,0),span:1,title:'🛬 인천 도착 🎉',sub:'17:00 귀국',type:'hotel',bg:'#E5DEFA',tc:'#3B2A7A'},
+  ],
+};
+
+// 유저가 추가한 이벤트
+const USER_EV={};
+
+function buildTimetable(){
+  const tabsEl=document.getElementById('tt-day-tabs');
+  const panelsEl=document.getElementById('tt-panels');
+  DAYS.forEach((d,di)=>{
+    // tab
+    const tab=document.createElement('div');
+    tab.className='tt-day-tab'+(di===0?' active':'');
+    tab.textContent=d.date;
+    tab.onclick=()=>{
+      document.querySelectorAll('.tt-day-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.tt-panel').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tt-panel-'+di).classList.add('active');
+      tab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+    };
+    tabsEl.appendChild(tab);
+
+    // panel
+    const panel=document.createElement('div');
+    panel.className='tt-panel'+(di===0?' active':'');
+    panel.id='tt-panel-'+di;
+
+    const presets=EV[di]||[];
+    const userEvs=USER_EV[di]||[];
+    const allEvs=[...presets,...userEvs];
+
+    if(allEvs.length===0 && !editMode){
+      panel.innerHTML='<div class="tt-empty">📌 일정 미정<br><small style="font-size:11px;">편집 모드에서 빈 칸을 탭해 추가하세요</small></div>';
+      panelsEl.appendChild(panel);return;
+    }
+
+    // spanned[si] = true이면 해당 슬롯은 위 이벤트의 rowspan에 포함됨 → ev 셀 생략
+    const spanned={};
+    allEvs.forEach(ev=>{
+      for(let s=1;s<ev.span;s++) spanned[ev.si+s]=true;
+    });
+
+    const wrap=document.createElement('div');wrap.className='tt-table-wrap';
+    const tbl=document.createElement('table');tbl.className='tt-tbl';
+    const thead=document.createElement('thead');
+    thead.innerHTML='<tr><th>시간</th><th>'+d.date+'</th></tr>';
+    tbl.appendChild(thead);
+    const tbody=document.createElement('tbody');
+
+    SLOTS.forEach((s,si)=>{
+      const tr=document.createElement('tr');
+
+      // 시간 셀 — 항상 렌더링
+      const tdTime=document.createElement('td');
+      tdTime.className='tc-time'+(s.isH?'':' half');
+      tdTime.textContent=s.l;
+      tr.appendChild(tdTime);
+
+      // 이벤트 셀 — spanned 구간이면 셀 자체를 추가하지 않음(rowspan이 차지)
+      if(!spanned[si]){
+        const ev=allEvs.find(e=>e.si===si);
+        const tdEv=document.createElement('td');
+        if(ev){
+          const realSpan=Math.min(ev.span, SLOTS.length-si);
+          tdEv.className='tc-ev ev-span';
+          if(realSpan>1) tdEv.rowSpan=realSpan;
+          const blk=document.createElement('div');
+          blk.className='ev-blk '+(ev.type||'activity');
+          blk.style.background=ev.bg||'';
+          blk.style.color=ev.tc||'';
+          blk.style.borderColor=ev.bg||'';
+          const label=ev.customLabel?'['+ev.customLabel+'] ':'';
+          blk.innerHTML='<div class="evt">'+label+ev.title+'</div>'+(ev.sub?'<div class="evs">'+ev.sub+'</div>':'');
+          tdEv.appendChild(blk);
+        } else {
+          tdEv.className='tc-ev';
+          tdEv.dataset.di=di;
+          tdEv.dataset.si=si;
+          tdEv.dataset.time=s.l;
+          tdEv.addEventListener('click',()=>openSheet(di,si,s.l,tdEv,tbody));
+        }
+        tr.appendChild(tdEv);
+      }
+      tbody.appendChild(tr);
+    });
+    tbl.appendChild(tbody);
+    wrap.appendChild(tbl);
+    panel.appendChild(wrap);
+    panelsEl.appendChild(panel);
+  });
+}
+buildTimetable();
+
+// ── SHEET
+const TYPE_COLORS={
+  flight:{bg:'#D6E4F7',tc:'#1A2744'},hotel:{bg:'#E5DEFA',tc:'#3B2A7A'},
+  activity:{bg:'#FAE0D5',tc:'#8B3A1E'},transit:{bg:'#E0E0E0',tc:'#333'},
+  free:{bg:'#FDF0D5',tc:'#7A5A1A'},custom:{bg:'#D9F0E8',tc:'#1A5E3A'},
+};
+let _ctx=null;
+function openSheet(di,si,timeStr,td,tbody){
+  if(!editMode)return;
+  _ctx={di,si,timeStr,td,tbody};
+  document.getElementById('s-title').value='';
+  document.getElementById('s-sub').value='';
+  document.getElementById('s-end').value='';
+  document.getElementById('s-custom').value='';
+  document.getElementById('s-custom-row').style.display='none';
+  document.getElementById('s-type').value='activity';
+  document.getElementById('s-bg').value=TYPE_COLORS.activity.bg;
+  document.getElementById('s-tc').value=TYPE_COLORS.activity.tc;
+  document.getElementById('sheet').classList.add('open');
+  setTimeout(()=>document.getElementById('s-title').focus(),300);
+}
+function closeSheet(){document.getElementById('sheet').classList.remove('open');_ctx=null;}
+function onTypeChange(){
+  const t=document.getElementById('s-type').value;
+  document.getElementById('s-custom-row').style.display=t==='custom'?'block':'none';
+  const c=TYPE_COLORS[t]||TYPE_COLORS.custom;
+  document.getElementById('s-bg').value=c.bg;
+  document.getElementById('s-tc').value=c.tc;
+}
+function resetSheetColors(){const t=document.getElementById('s-type').value;const c=TYPE_COLORS[t]||TYPE_COLORS.activity;document.getElementById('s-bg').value=c.bg;document.getElementById('s-tc').value=c.tc;}
+function confirmSheet(){
+  if(!_ctx)return;
+  const title=document.getElementById('s-title').value.trim();
+  if(!title){alert('일정 이름을 입력해주세요.');return;}
+  const sub=document.getElementById('s-sub').value.trim();
+  const type=document.getElementById('s-type').value;
+  const customLabel=document.getElementById('s-custom').value.trim();
+  const bg=document.getElementById('s-bg').value;
+  const tc=document.getElementById('s-tc').value;
+  const endStr=document.getElementById('s-end').value.trim();
+  let span=1;
+  if(endStr){const ep=parseTime(endStr);if(ep){const es=slotIdx(ep.h,ep.m);if(es>_ctx.si)span=es-_ctx.si;}}
+  const ev={si:_ctx.si,span,title,sub,type,bg,tc,customLabel};
+  if(!USER_EV[_ctx.di])USER_EV[_ctx.di]=[];
+  USER_EV[_ctx.di].push(ev);
+  // 패널 전체를 재빌드 (가장 안전한 방식)
+  rebuildPanel(_ctx.di);
+  closeSheet();
+  showToast('일정 추가됨 ✔');
+}
+function rebuildPanel(di){
+  const panel=document.getElementById('tt-panel-'+di);
+  if(!panel)return;
+  const d=DAYS[di];
+  const presets=EV[di]||[];
+  const userEvs=USER_EV[di]||[];
+  const allEvs=[...presets,...userEvs];
+
+  const spanned={};
+  allEvs.forEach(ev=>{for(let s=1;s<ev.span;s++)spanned[ev.si+s]=true;});
+
+  const wrap=document.createElement('div');wrap.className='tt-table-wrap';
+  const tbl=document.createElement('table');tbl.className='tt-tbl';
+  const thead=document.createElement('thead');
+  thead.innerHTML='<tr><th>시간</th><th>'+d.date+'</th></tr>';
+  tbl.appendChild(thead);
+  const tbody=document.createElement('tbody');
+
+  SLOTS.forEach((s,si)=>{
+    const tr=document.createElement('tr');
+    const tdTime=document.createElement('td');
+    tdTime.className='tc-time'+(s.isH?'':' half');
+    tdTime.textContent=s.l;
+    tr.appendChild(tdTime);
+    if(!spanned[si]){
+      const ev=allEvs.find(e=>e.si===si);
+      const tdEv=document.createElement('td');
+      if(ev){
+        const realSpan=Math.min(ev.span,SLOTS.length-si);
+        tdEv.className='tc-ev ev-span';
+        if(realSpan>1)tdEv.rowSpan=realSpan;
+        const blk=document.createElement('div');
+        blk.className='ev-blk '+(ev.type||'activity');
+        blk.style.background=ev.bg||'';blk.style.color=ev.tc||'';blk.style.borderColor=ev.bg||'';
+        const label=ev.customLabel?'['+ev.customLabel+'] ':'';
+        blk.innerHTML='<div class="evt">'+label+ev.title+'</div>'+(ev.sub?'<div class="evs">'+ev.sub+'</div>':'');
+        tdEv.appendChild(blk);
+      } else {
+        tdEv.className='tc-ev';
+        tdEv.dataset.di=di;tdEv.dataset.si=si;tdEv.dataset.time=s.l;
+        tdEv.addEventListener('click',()=>openSheet(di,si,s.l,tdEv,tbody));
+      }
+      tr.appendChild(tdEv);
+    }
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody);wrap.appendChild(tbl);
+  panel.innerHTML='';panel.appendChild(wrap);
+}
+function parseTime(s){const m=s.trim().match(/^(\d{1,2}):(\d{2})$/);if(!m)return null;return{h:parseInt(m[1]),m:parseInt(m[2])};}
+
+// ── LOCALSTORAGE 저장/복원
+const LS_KEY = 'honeymoon_data';
+
+function saveAll() {
+  try {
+    // TODO 저장
+    const todos = [];
+    document.querySelectorAll('.todo-item').forEach(item => {
+      const chk = item.querySelector('.todo-chk');
+      const txt = item.querySelector('.todo-txt')?.textContent || '';
+      const note = item.querySelector('.todo-note')?.textContent || '';
+      const pri = item.querySelector('.pri-badge')?.className.replace('pri-badge ','') || 'pri-mid';
+      const cat = item.closest('[id^="todo-"]')?.id || 'todo-prep';
+      const done = chk?.classList.contains('done') || false;
+      if (txt) todos.push({id: item.id, txt, note, pri, cat, done});
+    });
+
+    // 체크리스트 저장
+    const checks = {};
+    ['cl1','cl2','cl3'].forEach(clId => {
+      checks[clId] = [];
+      document.querySelectorAll('#'+clId+' .ck-item').forEach(item => {
+        const txt = item.querySelector('.ck-txt')?.textContent || '';
+        const done = item.querySelector('.ck-box')?.classList.contains('on') || false;
+        if (txt) checks[clId].push({txt, done});
+      });
+    });
+
+    // 예산 저장
+    const costs = [];
+    document.querySelectorAll('#cost-list .cost-row').forEach(row => {
+      const name = row.querySelector('.cost-name')?.textContent || '';
+      const amt = row.querySelector('.cost-amt')?.textContent || '';
+      const cur = row.dataset.cur || 'KRW';
+      const amtNum = row.dataset.amt || '0';
+      if (name) costs.push({name, amt, cur, amtNum});
+    });
+
+    // 날짜별 타임라인 저장
+    const timelines = {};
+    document.querySelectorAll('.tl').forEach(tl => {
+      const items = [];
+      tl.querySelectorAll('.tl-item').forEach(item => {
+        const tm = item.querySelector('.tl-tm')?.textContent || '';
+        const mn = item.querySelector('.tl-mn')?.textContent || '';
+        const sb = item.querySelector('.tl-sb')?.textContent || '';
+        if (mn) items.push({tm, mn, sb});
+      });
+      if (items.length) timelines[tl.id] = items;
+    });
+
+    localStorage.setItem(LS_KEY, JSON.stringify({todos, checks, costs, timelines, savedAt: Date.now()}));
+  } catch(e) { console.log('저장 오류:', e); }
+}
+
+function loadAll() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+
+    // TODO 복원
+    if (data.todos) {
+      // 기존 사용자 추가 항목만 지우기 (ti50 이후)
+      data.todos.forEach(t => {
+        const existing = document.getElementById(t.id);
+        if (existing) {
+          // 체크 상태만 복원
+          if (t.done) {
+            const chk = existing.querySelector('.todo-chk');
+            if (chk) { chk.classList.add('done'); chk.textContent = '✓'; }
+            existing.classList.add('done-item');
+          }
+        } else {
+          // 새로 추가된 항목 복원
+          const pMap = {pri-high:'긴급', pri-mid:'보통', pri-low:'여유'};
+          const pLabel = t.pri === 'pri-high' ? '긴급' : t.pri === 'pri-low' ? '여유' : '보통';
+          const div = document.createElement('div');
+          div.className = 'todo-item' + (t.done ? ' done-item' : '');
+          div.id = t.id;
+          div.innerHTML = '<div class="todo-chk' + (t.done ? ' done' : '') + '" onclick="toggleTodo(\'' + t.id + '\')">' + (t.done ? '✓' : '') + '</div>'
+            + '<div class="todo-body"><div class="todo-txt">' + t.txt + '</div>' + (t.note ? '<span class="todo-note">' + t.note + '</span>' : '') + '</div>'
+            + '<span class="pri-badge ' + t.pri + '">' + pLabel + '</span>'
+            + '<button class="todo-del-btn" onclick="delTodo(\'' + t.id + '\')">✕</button>';
+          const cat = document.getElementById(t.cat);
+          if (cat) cat.appendChild(div);
+        }
+      });
+    }
+
+    // 체크리스트 상태 복원
+    if (data.checks) {
+      ['cl1','cl2','cl3'].forEach(clId => {
+        if (!data.checks[clId]) return;
+        const items = document.querySelectorAll('#'+clId+' .ck-item');
+        data.checks[clId].forEach((saved, i) => {
+          if (items[i] && saved.done) {
+            const box = items[i].querySelector('.ck-box');
+            if (box) { box.classList.add('on'); box.textContent = '✓'; }
+          }
+        });
+      });
+    }
+
+    // 예산 복원 (기본 항목 외 추가된 것만)
+    if (data.costs && data.costs.length > 5) {
+      const list = document.getElementById('cost-list');
+      data.costs.slice(5).forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'cost-row';
+        div.dataset.cur = c.cur;
+        div.dataset.amt = c.amtNum;
+        div.innerHTML = '<div class="cost-name" contenteditable="false">' + c.name + '</div>'
+          + '<div style="text-align:right"><div class="cost-amt" contenteditable="false">' + c.amt + '</div>'
+          + '<span class="cbadge ' + (c.cur==='USD'?'usd':'krw') + '">' + c.cur + '</span></div>'
+          + '<button class="ebtn del del-show" onclick="delCostRow(event,this)" style="display:none">✕</button>';
+        list.appendChild(div);
+      });
+      calcTotal();
+    }
+
+    // 타임라인 복원
+    if (data.timelines) {
+      Object.entries(data.timelines).forEach(([tlId, items]) => {
+        const tl = document.getElementById(tlId);
+        if (!tl || tl.children.length > 0) return; // 이미 항목 있으면 스킵
+        items.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'tl-item';
+          div.innerHTML = '<div class="tl-tm" contenteditable="false">' + item.tm + '</div>'
+            + '<div class="tl-mn" contenteditable="false">' + item.mn + '</div>'
+            + (item.sb ? '<div class="tl-sb" contenteditable="false">' + item.sb + '</div>' : '')
+            + '<button class="ebtn del" onclick="dI(event,this)">✕</button>';
+          tl.appendChild(div);
+          const tbd = tl.closest('.day-bd')?.querySelector('.tbd-notice');
+          if (tbd) tbd.style.display = 'none';
+        });
+      });
+    }
+  } catch(e) { console.log('복원 오류:', e); }
+}
+
+// 앱 시작 시 복원
+window.addEventListener('DOMContentLoaded', () => { setTimeout(loadAll, 100); });
+
+// ── DAY CARDS
+function dtog(e,id){
+  if(editMode&&(e.target.closest('[contenteditable="true"]')||e.target.closest('.ebtn')))return;
+  document.getElementById(id).classList.toggle('collapsed');
+}
+function delCard(e,id){e.stopPropagation();if(confirm('삭제?')){document.getElementById(id).remove();saveAll();}}
+function dI(e,btn){e.stopPropagation();(btn.closest('.tl-item')||btn.closest('.ck-item'))?.remove();saveAll();}
+function aI(tlId){
+  const tl=document.getElementById(tlId);
+  const div=document.createElement('div');div.className='tl-item';
+  div.innerHTML='<div class="tl-tm" contenteditable="true" data-ph="시간">시간</div><div class="tl-mn" contenteditable="true" data-ph="내용">일정 입력</div><div class="tl-sb" contenteditable="true" data-ph="세부">세부 내용</div><button class="ebtn del" onclick="dI(event,this)">✕</button>';
+  const tbd=tl.closest('.day-bd').querySelector('.tbd-notice');if(tbd)tbd.style.display='none';
+  tl.appendChild(div);
+  const mn=div.querySelector('.tl-mn');mn.focus();
+  mn.addEventListener('blur',()=>saveAll());
+  div.querySelector('.tl-tm').addEventListener('blur',()=>saveAll());
+  div.querySelector('.tl-sb').addEventListener('blur',()=>saveAll());
+}
+function aCk(id){
+  const list=document.getElementById(id);
+  const div=document.createElement('div');div.className='ck-item';
+  div.innerHTML='<div class="ck-box" onclick="ck(this)"></div><div class="ck-txt" contenteditable="true">항목 입력</div><button class="ebtn del" onclick="dI(event,this)">✕</button>';
+  list.appendChild(div);
+  const txt=div.querySelector('.ck-txt');txt.focus();
+  txt.addEventListener('blur',()=>saveAll());
+}
+function ck(el){if(editMode)return;el.classList.toggle('on');el.textContent=el.classList.contains('on')?'✓':'';saveAll();}
+let nc=0;
+function addDay(){
+  nc++;const id='dnew'+nc;
+  const div=document.createElement('div');div.className='day-card';div.id=id;
+  div.innerHTML='<div class="day-hd" onclick="dtog(event,\''+id+'\')"><div class="day-date-blk"><div class="day-lbl">Day</div><div class="day-date-s" contenteditable="true">날짜</div></div><div class="day-meta2"><div class="day-ttl" contenteditable="true">제목</div><div class="day-sub2" contenteditable="true">부제</div></div><span class="dtag t-tbd" contenteditable="true">미정</span><button class="ebtn del" onclick="delCard(event,\''+id+'\')" style="margin-left:6px;">🗑</button><span class="dtog">▾</span></div><div class="day-bd"><div class="tbd-notice">📌 일정 미정</div><div class="tl" id="tl'+id+'"></div><button class="ebtn add" onclick="aI(\'tl'+id+'\')">＋ 일정 추가</button></div>';
+  document.querySelector('.btn-add-day-m').before(div);
+  div.querySelector('.day-date-s').focus();
+}
+
+// ── COST
+const RATE=1380;
+function calcTotal(){
+  let sum=0;
+  document.querySelectorAll('#cost-list .cost-row').forEach(r=>{
+    const cur=r.dataset.cur,amt=parseFloat(r.dataset.amt)||0;
+    sum+=cur==='KRW'?amt:amt*RATE;
+  });
+  document.getElementById('ctotal').textContent='≈ '+Math.round(sum).toLocaleString()+'원';
+}
+calcTotal();
+function delCostRow(e,btn){e.stopPropagation();btn.closest('.cost-row').remove();calcTotal();saveAll();}
+function addCostRow(){
+  const list=document.getElementById('cost-list');
+  const div=document.createElement('div');div.className='cost-row';div.dataset.cur='KRW';div.dataset.amt='0';
+  div.innerHTML='<div class="cost-name" contenteditable="true">항목 입력</div><div style="text-align:right"><div class="cost-amt" contenteditable="true" oninput="updAmt(this)">0</div><span class="cbadge krw">KRW</span></div><button class="ebtn del del-show" onclick="delCostRow(event,this)" style="display:block">✕</button>';
+  list.appendChild(div);
+  const el=div.querySelector('[contenteditable]');el.focus();
+  el.addEventListener('blur',()=>saveAll());
+}
+function updAmt(el){const r=el.closest('.cost-row');r.dataset.amt=el.textContent.replace(/[^0-9.]/g,'')||0;calcTotal();}
+
+// ── TODO
+let tic=50;
+function toggleTodo(id){
+  const item=document.getElementById(id);
+  const chk=item.querySelector('.todo-chk');
+  chk.classList.toggle('done');chk.textContent=chk.classList.contains('done')?'✓':'';
+  item.classList.toggle('done-item');
+  saveAll();
+}
+function delTodo(id){document.getElementById(id)?.remove();saveAll();}
+function addTodo(){
+  const txt=document.getElementById('ta-txt').value.trim();if(!txt)return;
+  const note=document.getElementById('ta-note').value.trim();
+  const cat=document.getElementById('ta-cat').value;
+  const pri=document.getElementById('ta-pri').value;
+  const pMap={high:'긴급',mid:'보통',low:'여유'};
+  const pClass={high:'pri-high',mid:'pri-mid',low:'pri-low'};
+  tic++;const id='ti'+tic;
+  const div=document.createElement('div');div.className='todo-item';div.id=id;
+  div.innerHTML='<div class="todo-chk" onclick="toggleTodo(\''+id+'\')"></div><div class="todo-body"><div class="todo-txt">'+txt+'</div>'+(note?'<span class="todo-note">'+note+'</span>':'')+'</div><span class="pri-badge '+pClass[pri]+'">'+pMap[pri]+'</span><button class="todo-del-btn" onclick="delTodo(\''+id+'\')" style="display:block">✕</button>';
+  document.getElementById(cat)?.appendChild(div);
+  document.getElementById('ta-txt').value='';document.getElementById('ta-note').value='';
+  saveAll();
+  showToast('저장됨 ✔');
+}
+// 편집 완료 시 저장
+const origToggleEdit = toggleEdit;
+// contenteditable blur 시 자동 저장
+document.addEventListener('blur', e => {
+  if(e.target.getAttribute('contenteditable')==='true') setTimeout(saveAll, 200);
+}, true);
+// sheet close on overlay tap
+document.getElementById('sheet').addEventListener('click',function(e){if(e.target===this)closeSheet();});
+</script>
+</body>
+</html>
