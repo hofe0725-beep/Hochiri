@@ -632,8 +632,7 @@ body.edit-mode .todo-add-form{display:flex;}
 
 <div class="toast" id="toast">✔ 저장됨</div>
 
-<script>
-// ── SECTION TABS
+<script type="module">
 function showSection(id,el){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
@@ -890,150 +889,194 @@ function rebuildPanel(di){
 }
 function parseTime(s){const m=s.trim().match(/^(\d{1,2}):(\d{2})$/);if(!m)return null;return{h:parseInt(m[1]),m:parseInt(m[2])};}
 
-// ── LOCALSTORAGE 저장/복원
-const LS_KEY = 'honeymoon_data';
+// ── FIREBASE 실시간 동기화
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, doc, setDoc, onSnapshot, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
+const firebaseConfig = {
+  apiKey: "AIzaSyDD5tif2yStQrIF1e2GhByIJfQXiq9inek",
+  authDomain: "honeymoon-82c75.firebaseapp.com",
+  projectId: "honeymoon-82c75",
+  storageBucket: "honeymoon-82c75.firebasestorage.app",
+  messagingSenderId: "267557537663",
+  appId: "1:267557537663:web:5f3dfe5496033f6fcffc4a"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+const DOC_REF = doc(db, 'honeymoon', 'shared');
+
+let isSyncing = false; // 무한루프 방지
+
+// ── 데이터 수집
+function collectData() {
+  const todos = [];
+  document.querySelectorAll('.todo-item').forEach(item => {
+    const chk = item.querySelector('.todo-chk');
+    const txt = item.querySelector('.todo-txt')?.textContent || '';
+    const note = item.querySelector('.todo-note')?.textContent || '';
+    const pri = item.querySelector('.pri-badge')?.className.replace('pri-badge ','') || 'pri-mid';
+    const cat = item.closest('[id^="todo-"]')?.id || 'todo-prep';
+    const done = chk?.classList.contains('done') || false;
+    if (txt.trim()) todos.push({id: item.id, txt, note, pri, cat, done});
+  });
+
+  const checks = {};
+  ['cl1','cl2','cl3'].forEach(clId => {
+    checks[clId] = [];
+    document.querySelectorAll('#'+clId+' .ck-item').forEach(item => {
+      const txt = item.querySelector('.ck-txt')?.textContent || '';
+      const done = item.querySelector('.ck-box')?.classList.contains('on') || false;
+      if (txt.trim()) checks[clId].push({txt, done});
+    });
+  });
+
+  const costs = [];
+  document.querySelectorAll('#cost-list .cost-row').forEach(row => {
+    const name = row.querySelector('.cost-name')?.textContent || '';
+    const amt = row.querySelector('.cost-amt')?.textContent || '';
+    const cur = row.dataset.cur || 'KRW';
+    const amtNum = row.dataset.amt || '0';
+    if (name.trim()) costs.push({name, amt, cur, amtNum});
+  });
+
+  const timelines = {};
+  document.querySelectorAll('.tl').forEach(tl => {
+    const items = [];
+    tl.querySelectorAll('.tl-item').forEach(item => {
+      const tm = item.querySelector('.tl-tm')?.textContent || '';
+      const mn = item.querySelector('.tl-mn')?.textContent || '';
+      const sb = item.querySelector('.tl-sb')?.textContent || '';
+      if (mn.trim()) items.push({tm, mn, sb});
+    });
+    if (items.length) timelines[tl.id] = items;
+  });
+
+  return {todos, checks, costs, timelines, updatedAt: Date.now()};
+}
+
+// ── Firebase에 저장
+let saveTimer = null;
 function saveAll() {
-  try {
-    // TODO 저장
-    const todos = [];
-    document.querySelectorAll('.todo-item').forEach(item => {
-      const chk = item.querySelector('.todo-chk');
-      const txt = item.querySelector('.todo-txt')?.textContent || '';
-      const note = item.querySelector('.todo-note')?.textContent || '';
-      const pri = item.querySelector('.pri-badge')?.className.replace('pri-badge ','') || 'pri-mid';
-      const cat = item.closest('[id^="todo-"]')?.id || 'todo-prep';
-      const done = chk?.classList.contains('done') || false;
-      if (txt) todos.push({id: item.id, txt, note, pri, cat, done});
-    });
-
-    // 체크리스트 저장
-    const checks = {};
-    ['cl1','cl2','cl3'].forEach(clId => {
-      checks[clId] = [];
-      document.querySelectorAll('#'+clId+' .ck-item').forEach(item => {
-        const txt = item.querySelector('.ck-txt')?.textContent || '';
-        const done = item.querySelector('.ck-box')?.classList.contains('on') || false;
-        if (txt) checks[clId].push({txt, done});
-      });
-    });
-
-    // 예산 저장
-    const costs = [];
-    document.querySelectorAll('#cost-list .cost-row').forEach(row => {
-      const name = row.querySelector('.cost-name')?.textContent || '';
-      const amt = row.querySelector('.cost-amt')?.textContent || '';
-      const cur = row.dataset.cur || 'KRW';
-      const amtNum = row.dataset.amt || '0';
-      if (name) costs.push({name, amt, cur, amtNum});
-    });
-
-    // 날짜별 타임라인 저장
-    const timelines = {};
-    document.querySelectorAll('.tl').forEach(tl => {
-      const items = [];
-      tl.querySelectorAll('.tl-item').forEach(item => {
-        const tm = item.querySelector('.tl-tm')?.textContent || '';
-        const mn = item.querySelector('.tl-mn')?.textContent || '';
-        const sb = item.querySelector('.tl-sb')?.textContent || '';
-        if (mn) items.push({tm, mn, sb});
-      });
-      if (items.length) timelines[tl.id] = items;
-    });
-
-    localStorage.setItem(LS_KEY, JSON.stringify({todos, checks, costs, timelines, savedAt: Date.now()}));
-  } catch(e) { console.log('저장 오류:', e); }
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    if (isSyncing) return;
+    try {
+      await setDoc(DOC_REF, collectData());
+    } catch(e) { console.log('저장 오류:', e); }
+  }, 600); // 600ms 디바운스
 }
 
-function loadAll() {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return;
-    const data = JSON.parse(raw);
+// ── Firebase에서 복원
+function applyData(data) {
+  if (!data) return;
+  isSyncing = true;
 
-    // TODO 복원
-    if (data.todos) {
-      // 기존 사용자 추가 항목만 지우기 (ti50 이후)
-      data.todos.forEach(t => {
-        const existing = document.getElementById(t.id);
-        if (existing) {
-          // 체크 상태만 복원
-          if (t.done) {
-            const chk = existing.querySelector('.todo-chk');
-            if (chk) { chk.classList.add('done'); chk.textContent = '✓'; }
-            existing.classList.add('done-item');
-          }
-        } else {
-          // 새로 추가된 항목 복원
-          const pMap = {'pri-high':'긴급', 'pri-mid':'보통', 'pri-low':'여유'};
-          const pLabel = t.pri === 'pri-high' ? '긴급' : t.pri === 'pri-low' ? '여유' : '보통';
-          const div = document.createElement('div');
-          div.className = 'todo-item' + (t.done ? ' done-item' : '');
-          div.id = t.id;
-          div.innerHTML = '<div class="todo-chk' + (t.done ? ' done' : '') + '" onclick="toggleTodo(\'' + t.id + '\')">' + (t.done ? '✓' : '') + '</div>'
-            + '<div class="todo-body"><div class="todo-txt">' + t.txt + '</div>' + (t.note ? '<span class="todo-note">' + t.note + '</span>' : '') + '</div>'
-            + '<span class="pri-badge ' + t.pri + '">' + pLabel + '</span>'
-            + '<button class="todo-del-btn" onclick="delTodo(\'' + t.id + '\')">✕</button>';
-          const cat = document.getElementById(t.cat);
-          if (cat) cat.appendChild(div);
+  // TODO 복원
+  if (data.todos) {
+    data.todos.forEach(t => {
+      const existing = document.getElementById(t.id);
+      if (existing) {
+        const chk = existing.querySelector('.todo-chk');
+        if (t.done && chk && !chk.classList.contains('done')) {
+          chk.classList.add('done'); chk.textContent = '✓';
+          existing.classList.add('done-item');
+        } else if (!t.done && chk && chk.classList.contains('done')) {
+          chk.classList.remove('done'); chk.textContent = '';
+          existing.classList.remove('done-item');
         }
-      });
-    }
-
-    // 체크리스트 상태 복원
-    if (data.checks) {
-      ['cl1','cl2','cl3'].forEach(clId => {
-        if (!data.checks[clId]) return;
-        const items = document.querySelectorAll('#'+clId+' .ck-item');
-        data.checks[clId].forEach((saved, i) => {
-          if (items[i] && saved.done) {
-            const box = items[i].querySelector('.ck-box');
-            if (box) { box.classList.add('on'); box.textContent = '✓'; }
-          }
-        });
-      });
-    }
-
-    // 예산 복원 (기본 항목 외 추가된 것만)
-    if (data.costs && data.costs.length > 5) {
-      const list = document.getElementById('cost-list');
-      data.costs.slice(5).forEach(c => {
+      } else {
+        const pLabel = t.pri === 'pri-high' ? '긴급' : t.pri === 'pri-low' ? '여유' : '보통';
         const div = document.createElement('div');
-        div.className = 'cost-row';
-        div.dataset.cur = c.cur;
-        div.dataset.amt = c.amtNum;
-        div.innerHTML = '<div class="cost-name" contenteditable="false">' + c.name + '</div>'
-          + '<div style="text-align:right"><div class="cost-amt" contenteditable="false">' + c.amt + '</div>'
-          + '<span class="cbadge ' + (c.cur==='USD'?'usd':'krw') + '">' + c.cur + '</span></div>'
-          + '<button class="ebtn del del-show" onclick="delCostRow(event,this)" style="display:none">✕</button>';
-        list.appendChild(div);
-      });
-      calcTotal();
-    }
+        div.className = 'todo-item' + (t.done ? ' done-item' : '');
+        div.id = t.id;
+        div.innerHTML = '<div class="todo-chk' + (t.done ? ' done' : '') + '" onclick="toggleTodo(\'' + t.id + '\')">' + (t.done ? '✓' : '') + '</div>'
+          + '<div class="todo-body"><div class="todo-txt">' + t.txt + '</div>' + (t.note ? '<span class="todo-note">' + t.note + '</span>' : '') + '</div>'
+          + '<span class="pri-badge ' + t.pri + '">' + pLabel + '</span>'
+          + '<button class="todo-del-btn" onclick="delTodo(\'' + t.id + '\')">✕</button>';
+        const cat = document.getElementById(t.cat);
+        if (cat) cat.appendChild(div);
+      }
+    });
+    // 삭제된 항목 제거 (ti50 이후 사용자 추가 항목만)
+    document.querySelectorAll('.todo-item').forEach(item => {
+      const idNum = parseInt(item.id.replace('ti',''));
+      if (idNum > 50 && !data.todos.find(t => t.id === item.id)) item.remove();
+    });
+  }
 
-    // 타임라인 복원
-    if (data.timelines) {
-      Object.entries(data.timelines).forEach(([tlId, items]) => {
-        const tl = document.getElementById(tlId);
-        if (!tl || tl.children.length > 0) return; // 이미 항목 있으면 스킵
-        items.forEach(item => {
-          const div = document.createElement('div');
-          div.className = 'tl-item';
-          div.innerHTML = '<div class="tl-tm" contenteditable="false">' + item.tm + '</div>'
-            + '<div class="tl-mn" contenteditable="false">' + item.mn + '</div>'
-            + (item.sb ? '<div class="tl-sb" contenteditable="false">' + item.sb + '</div>' : '')
-            + '<button class="ebtn del" onclick="dI(event,this)">✕</button>';
-          tl.appendChild(div);
-          const tbd = tl.closest('.day-bd')?.querySelector('.tbd-notice');
-          if (tbd) tbd.style.display = 'none';
-        });
+  // 체크리스트 상태 복원
+  if (data.checks) {
+    ['cl1','cl2','cl3'].forEach(clId => {
+      if (!data.checks[clId]) return;
+      const items = document.querySelectorAll('#'+clId+' .ck-item');
+      data.checks[clId].forEach((saved, i) => {
+        if (!items[i]) return;
+        const box = items[i].querySelector('.ck-box');
+        if (!box) return;
+        if (saved.done && !box.classList.contains('on')) { box.classList.add('on'); box.textContent = '✓'; }
+        else if (!saved.done && box.classList.contains('on')) { box.classList.remove('on'); box.textContent = ''; }
       });
-    }
-  } catch(e) { console.log('복원 오류:', e); }
+    });
+  }
+
+  // 예산 복원 (추가 항목만)
+  if (data.costs && data.costs.length > 5) {
+    const list = document.getElementById('cost-list');
+    // 기존 추가 항목 제거 후 재생성
+    list.querySelectorAll('.cost-row:nth-child(n+6)').forEach(r => r.remove());
+    data.costs.slice(5).forEach(c => {
+      const div = document.createElement('div');
+      div.className = 'cost-row';
+      div.dataset.cur = c.cur; div.dataset.amt = c.amtNum;
+      div.innerHTML = '<div class="cost-name" contenteditable="false">' + c.name + '</div>'
+        + '<div style="text-align:right"><div class="cost-amt" contenteditable="false">' + c.amt + '</div>'
+        + '<span class="cbadge ' + (c.cur==='USD'?'usd':'krw') + '">' + c.cur + '</span></div>'
+        + '<button class="ebtn del del-show" onclick="delCostRow(event,this)">✕</button>';
+      list.appendChild(div);
+    });
+    calcTotal();
+  }
+
+  // 타임라인 복원
+  if (data.timelines) {
+    Object.entries(data.timelines).forEach(([tlId, items]) => {
+      const tl = document.getElementById(tlId);
+      if (!tl) return;
+      tl.innerHTML = '';
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'tl-item';
+        div.innerHTML = '<div class="tl-tm" contenteditable="false">' + item.tm + '</div>'
+          + '<div class="tl-mn" contenteditable="false">' + item.mn + '</div>'
+          + (item.sb ? '<div class="tl-sb" contenteditable="false">' + item.sb + '</div>' : '')
+          + '<button class="ebtn del" onclick="dI(event,this)">✕</button>';
+        tl.appendChild(div);
+        const tbd = tl.closest('.day-bd')?.querySelector('.tbd-notice');
+        if (tbd) tbd.style.display = 'none';
+      });
+    });
+  }
+
+  isSyncing = false;
 }
 
-// 앱 시작 시 복원
-window.addEventListener('DOMContentLoaded', () => { setTimeout(loadAll, 100); });
+// ── 실시간 리스너 (다른 기기에서 변경 시 자동 반영)
+function startRealtimeSync() {
+  onSnapshot(DOC_REF, (snap) => {
+    if (snap.exists()) {
+      applyData(snap.data());
+      showToast('🔄 동기화됨');
+    }
+  });
+}
+
+// 앱 시작 시
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    startRealtimeSync();
+  }, 500);
+});
 
 // ── DAY CARDS
 function dtog(e,id){
@@ -1126,6 +1169,15 @@ document.addEventListener('blur', e => {
 }, true);
 // sheet close on overlay tap
 document.getElementById('sheet').addEventListener('click',function(e){if(e.target===this)closeSheet();});
+
+// ── window에 함수 노출 (type=module 스코프 문제 해결)
+Object.assign(window, {
+  showSection, toggleEdit, dtog, delCard, dI, aI, aCk, ck, addDay,
+  calcTotal, delCostRow, addCostRow, updAmt,
+  toggleTodo, delTodo, addTodo,
+  openSheet, closeSheet, onTypeChange, resetSheetColors, confirmSheet,
+  saveAll
+});
 </script>
 </body>
 </html>
