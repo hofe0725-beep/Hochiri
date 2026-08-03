@@ -972,73 +972,80 @@ function applyData(data) {
   if (!data) return;
   isSyncing = true;
 
-  // TODO 복원
+  // ── TODO 전체 복원
   if (data.todos) {
-    data.todos.forEach(t => {
-      const existing = document.getElementById(t.id);
-      if (existing) {
-        const chk = existing.querySelector('.todo-chk');
-        if (t.done && chk && !chk.classList.contains('done')) {
-          chk.classList.add('done'); chk.textContent = '✓';
-          existing.classList.add('done-item');
-        } else if (!t.done && chk && chk.classList.contains('done')) {
-          chk.classList.remove('done'); chk.textContent = '';
-          existing.classList.remove('done-item');
-        }
-      } else {
-        const pLabel = t.pri === 'pri-high' ? '긴급' : t.pri === 'pri-low' ? '여유' : '보통';
-        const div = document.createElement('div');
-        div.className = 'todo-item' + (t.done ? ' done-item' : '');
-        div.id = t.id;
-        div.innerHTML = '<div class="todo-chk' + (t.done ? ' done' : '') + '" onclick="toggleTodo(\'' + t.id + '\')">' + (t.done ? '✓' : '') + '</div>'
-          + '<div class="todo-body"><div class="todo-txt">' + t.txt + '</div>' + (t.note ? '<span class="todo-note">' + t.note + '</span>' : '') + '</div>'
-          + '<span class="pri-badge ' + t.pri + '">' + pLabel + '</span>'
-          + '<button class="todo-del-btn" onclick="delTodo(\'' + t.id + '\')">✕</button>';
-        const cat = document.getElementById(t.cat);
-        if (cat) cat.appendChild(div);
+    // 1) 기본 항목 체크 상태 복원
+    const baseIds = ['ti1','ti2','ti3','ti4','ti5','ti6','ti7'];
+    baseIds.forEach(id => {
+      const saved = data.todos.find(t => t.id === id);
+      const item = document.getElementById(id);
+      if (!item || !saved) return;
+      const chk = item.querySelector('.todo-chk');
+      if (!chk) return;
+      if (saved.done && !chk.classList.contains('done')) {
+        chk.classList.add('done'); chk.textContent = '✓'; item.classList.add('done-item');
+      } else if (!saved.done && chk.classList.contains('done')) {
+        chk.classList.remove('done'); chk.textContent = ''; item.classList.remove('done-item');
       }
     });
-    // 삭제된 항목 제거 (ti50 이후 사용자 추가 항목만)
+
+    // 2) 사용자 추가 항목 — 전부 지우고 Firebase 데이터로 재생성
     document.querySelectorAll('.todo-item').forEach(item => {
-      const idNum = parseInt(item.id.replace('ti',''));
-      if (idNum > 50 && !data.todos.find(t => t.id === item.id)) item.remove();
+      if (!baseIds.includes(item.id)) item.remove();
+    });
+    data.todos.filter(t => !baseIds.includes(t.id)).forEach(t => {
+      const pLabel = t.pri === 'pri-high' ? '긴급' : t.pri === 'pri-low' ? '여유' : '보통';
+      const div = document.createElement('div');
+      div.className = 'todo-item' + (t.done ? ' done-item' : '');
+      div.id = t.id;
+      div.innerHTML = '<div class="todo-chk' + (t.done ? ' done' : '') + '" onclick="toggleTodo(\'' + t.id + '\')">' + (t.done ? '✓' : '') + '</div>'
+        + '<div class="todo-body"><div class="todo-txt">' + t.txt + '</div>' + (t.note ? '<span class="todo-note">' + t.note + '</span>' : '') + '</div>'
+        + '<span class="pri-badge ' + t.pri + '">' + pLabel + '</span>'
+        + '<button class="todo-del-btn" onclick="delTodo(\'' + t.id + '\')">✕</button>';
+      const cat = document.getElementById(t.cat);
+      if (cat) cat.appendChild(div);
     });
   }
 
-  // 체크리스트 상태 복원
+  // ── 체크리스트 상태 복원
   if (data.checks) {
     ['cl1','cl2','cl3'].forEach(clId => {
       if (!data.checks[clId]) return;
-      const items = document.querySelectorAll('#'+clId+' .ck-item');
+      const items = document.querySelectorAll('#' + clId + ' .ck-item');
       data.checks[clId].forEach((saved, i) => {
         if (!items[i]) return;
         const box = items[i].querySelector('.ck-box');
         if (!box) return;
-        if (saved.done && !box.classList.contains('on')) { box.classList.add('on'); box.textContent = '✓'; }
-        else if (!saved.done && box.classList.contains('on')) { box.classList.remove('on'); box.textContent = ''; }
+        if (saved.done && !box.classList.contains('on')) {
+          box.classList.add('on'); box.textContent = '✓';
+        } else if (!saved.done && box.classList.contains('on')) {
+          box.classList.remove('on'); box.textContent = '';
+        }
       });
     });
   }
 
-  // 예산 복원 (추가 항목만)
-  if (data.costs && data.costs.length > 5) {
+  // ── 예산 복원 — 기본 5개 유지, 추가 항목만 Firebase로
+  if (data.costs) {
     const list = document.getElementById('cost-list');
-    // 기존 추가 항목 제거 후 재생성
-    list.querySelectorAll('.cost-row:nth-child(n+6)').forEach(r => r.remove());
+    // 기본 5개 이후 항목 전부 제거
+    const allRows = list.querySelectorAll('.cost-row');
+    allRows.forEach((row, i) => { if (i >= 5) row.remove(); });
+    // Firebase 추가 항목 재생성
     data.costs.slice(5).forEach(c => {
       const div = document.createElement('div');
       div.className = 'cost-row';
       div.dataset.cur = c.cur; div.dataset.amt = c.amtNum;
       div.innerHTML = '<div class="cost-name" contenteditable="false">' + c.name + '</div>'
         + '<div style="text-align:right"><div class="cost-amt" contenteditable="false">' + c.amt + '</div>'
-        + '<span class="cbadge ' + (c.cur==='USD'?'usd':'krw') + '">' + c.cur + '</span></div>'
+        + '<span class="cbadge ' + (c.cur === 'USD' ? 'usd' : 'krw') + '">' + c.cur + '</span></div>'
         + '<button class="ebtn del del-show" onclick="delCostRow(event,this)">✕</button>';
       list.appendChild(div);
     });
     calcTotal();
   }
 
-  // 타임라인 복원
+  // ── 타임라인 복원 — Firebase 데이터가 있는 날짜만 덮어씀
   if (data.timelines) {
     Object.entries(data.timelines).forEach(([tlId, items]) => {
       const tl = document.getElementById(tlId);
@@ -1062,11 +1069,17 @@ function applyData(data) {
 }
 
 // ── 실시간 리스너 (다른 기기에서 변경 시 자동 반영)
+let isFirstLoad = true;
+
 function startRealtimeSync() {
   onSnapshot(DOC_REF, (snap) => {
     if (snap.exists()) {
       applyData(snap.data());
-      showToast('🔄 동기화됨');
+      if (isFirstLoad) {
+        isFirstLoad = false;
+      } else {
+        showToast('🔄 동기화됨');
+      }
     }
   });
 }
