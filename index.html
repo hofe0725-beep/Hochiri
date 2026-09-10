@@ -75,7 +75,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--sand);color:var(--te
 .tt-tbl td.tc-time{background:#EDE7DB;text-align:center;font-size:11px;font-weight:700;color:var(--navy-mid);width:56px;padding:4px;}
 .tt-tbl td.tc-time.half{background:#F3EEE6;font-weight:400;color:var(--muted);font-size:10px;}
 .tt-tbl td.tc-ev{padding:0;cursor:default;}
-.tt-tbl td.tc-ev.ev-span{padding:3px 5px;vertical-align:middle;}
+.tt-tbl td.tc-ev.ev-span{padding:3px 5px;vertical-align:top;}
+.tt-tbl td.tc-ev.ev-span .ev-blk{position:absolute;top:0;left:0;right:0;bottom:0;border-radius:6px;padding:5px 8px;font-size:12px;line-height:1.4;border:1px solid rgba(0,0,0,.07);}
+.tt-tbl td.tc-ev.ev-span{position:relative;padding:0;}
 body.edit-mode .tt-tbl td.tc-ev:not(.ev-span){cursor:pointer;background:rgba(201,169,110,.04);}
 body.edit-mode .tt-tbl td.tc-ev:not(.ev-span):active{background:rgba(201,169,110,.18);}
 .ev-blk{border-radius:6px;padding:5px 8px;font-size:12px;line-height:1.4;border:1px solid rgba(0,0,0,.07);}
@@ -182,7 +184,7 @@ body.edit-mode .tt-tbl td.tc-ev:not(.ev-span):active{background:rgba(201,169,110
 .ebtn{display:none;border:none;cursor:pointer;border-radius:8px;font-size:12px;padding:6px 10px;font-family:inherit;font-weight:500;}
 body.edit-mode .ebtn{display:inline-flex;align-items:center;gap:3px;}
 .ebtn.del{background:#FFF0EE;color:var(--coral);}
-.ebtn.add{background:#E8F5F5;color:var(--teal);margin-top:10px;width:100%;justify-content:center;padding:10px;}
+.ebtn.add{display:inline-flex!important;background:#E8F5F5;color:var(--teal);margin-top:10px;width:100%;justify-content:center;padding:10px;align-items:center;gap:3px;}
 .btn-add-day-m{width:100%;padding:14px;background:#fff;border:2px dashed var(--gold-light);border-radius:var(--radius);color:var(--gold);font-size:14px;cursor:pointer;margin-bottom:10px;font-family:inherit;display:none;}
 body.edit-mode .btn-add-day-m{display:block;}
 body.edit-mode [contenteditable]{outline:none;background:var(--edit-hl);border-radius:4px;padding:1px 4px;cursor:text;}
@@ -762,6 +764,8 @@ function buildTimetable(){
           const realSpan=Math.min(ev.span, SLOTS.length-si);
           tdEv.className='tc-ev ev-span';
           if(realSpan>1) tdEv.rowSpan=realSpan;
+          tdEv.style.background=ev.bg||'';
+          tdEv.style.borderLeft='3px solid '+(ev.tc||'#999');
           const blk=document.createElement('div');
           blk.className='ev-blk '+(ev.type||'activity');
           blk.style.background=ev.bg||'';
@@ -870,6 +874,8 @@ function rebuildPanel(di){
         const realSpan=Math.min(ev.span,SLOTS.length-si);
         tdEv.className='tc-ev ev-span';
         if(realSpan>1)tdEv.rowSpan=realSpan;
+        tdEv.style.background=ev.bg||'';
+        tdEv.style.borderLeft='3px solid '+(ev.tc||'#999');
         const blk=document.createElement('div');
         blk.className='ev-blk '+(ev.type||'activity');
         blk.style.background=ev.bg||'';blk.style.color=ev.tc||'';blk.style.borderColor=ev.bg||'';
