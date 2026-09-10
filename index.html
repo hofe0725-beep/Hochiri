@@ -409,16 +409,26 @@ body.edit-mode .todo-add-form{display:flex;}
   <div class="day-card" id="d0923">
     <div class="day-hd" onclick="dtog(event,'d0923')">
       <div class="day-date-blk"><div class="day-lbl">Day</div><div class="day-date-s" contenteditable="false">9/23 (수)</div></div>
-      <div class="day-meta2"><div class="day-ttl" contenteditable="false">두바이 자유</div><div class="day-sub2" contenteditable="false">사막투어 등 — 미정</div></div>
-      <span class="dtag t-dubai" contenteditable="false">두바이</span>
+      <div class="day-meta2"><div class="day-ttl" contenteditable="false">아부다비 시티투어</div><div class="day-sub2" contenteditable="false">두리두바이 · 풀데이 투어코스2</div></div>
+      <span class="dtag t-dubai" contenteditable="false">두바이→아부다비</span>
       <button class="ebtn del" onclick="delCard(event,'d0923')" style="margin-left:6px;">🗑</button>
       <span class="dtog">▾</span>
     </div>
     <div class="day-bd">
-      <div class="tbd-notice" id="tbd0923">📌 세부 일정 미정</div>
-      <div class="tl" id="tl0923"></div>
+      <div class="tbd-notice" id="tbd0923" style="display:none">📌 세부 일정 미정</div>
+      <div class="tl" id="tl0923">
+        <div class="tl-item"><div class="tl-tm" contenteditable="false">09:00</div><div class="tl-mn" contenteditable="false">🚌 그랜드하얏트 픽업</div><div class="tl-sb" contenteditable="false">두리두바이 · 호텔 1층 10분 전 대기 / 아부다비의 경우 10시 이후 픽업</div></div>
+        <div class="tl-item"><div class="tl-tm" contenteditable="false">10:30</div><div class="tl-mn" contenteditable="false">🏝️ 야스 아일랜드 자유관람</div><div class="tl-sb" contenteditable="false">페라리 월드·워터파크 외관 관람 (자유)</div></div>
+        <div class="tl-item"><div class="tl-tm" contenteditable="false">11:30</div><div class="tl-mn" contenteditable="false">🖼️ 루브르 아부다비 내부 관람 ✅</div><div class="tl-sb" contenteditable="false">사디야트 섬 · 세계적 예술 박물관 · 동서양 문명 전시 / 월요일 휴관 없음(수요일)</div></div>
+        <div class="tl-item"><div class="tl-tm" contenteditable="false">13:30</div><div class="tl-mn" contenteditable="false">🍽️ 점심 식사</div><div class="tl-sb" contenteditable="false">가이드 안내 식당 또는 자유 식사</div></div>
+        <div class="tl-item"><div class="tl-tm" contenteditable="false">14:30</div><div class="tl-mn" contenteditable="false">🏛️ 카스르 알 와탄 왕궁 내부 관람 ✅</div><div class="tl-sb" contenteditable="false">아부다비 대통령궁 · 화려한 아라비아 건축·대연회장 / 입장권 포함</div></div>
+        <div class="tl-item"><div class="tl-tm" contenteditable="false">16:30</div><div class="tl-mn" contenteditable="false">🕌 셰이크 자이드 그랜드 모스크</div><div class="tl-sb" contenteditable="false">썬셋 타임 관람 (가장 화려) · 여성 아바야 착용 필수 · 남성 긴바지 착용</div></div>
+        <div class="tl-item"><div class="tl-tm" contenteditable="false">19:30</div><div class="tl-mn" contenteditable="false">🚌 두바이·아부다비 원하는 장소 드랍</div><div class="tl-sb" contenteditable="false">약 20시 전후 투어 종료 / 가이드팁 1인 $30 현장 지불 필수</div></div>
+      </div>
       <button class="ebtn add" onclick="aI('tl0923')">＋ 일정 추가</button>
-      <div class="al al-i"><span>🏜️</span><div contenteditable="false">사막투어 당일 10시 카카오톡 픽업 시간 확인. 10분 전 호텔 1층 대기.</div></div>
+      <div class="al al-i"><span>📋</span><div contenteditable="false">두리두바이 투어 · 입장권 택2: 카스르 알 와탄 왕궁 + 루브르 아부다비 선택 완료 ✅</div></div>
+      <div class="al al-r"><span>⚠️</span><div contenteditable="false">가이드팁 1인 $30 현장 지불 필수 · 긴급: 이용민소장 010-9776-0451 / 카카오톡 ymlee0451</div></div>
+      <div class="al al-i"><span>👗</span><div contenteditable="false">그랜드 모스크 여성 복장: 손목·발목·머리카락·목 모두 가리는 복장 (아바야·스카프 착용) · 속 비치는 옷·찢어진 청바지 입장 불가</div></div>
     </div>
   </div>
 
@@ -681,6 +691,14 @@ const EV={
     {si:slotIdx(0,0),span:9,title:'✈ EK323 기내',sub:'인천→두바이',type:'flight',bg:'#D6E4F7',tc:'#1A2744'},
     {si:slotIdx(4,30),span:2,title:'🛬 두바이 도착',sub:'04:25 / 입국·픽업',type:'hotel',bg:'#E5DEFA',tc:'#3B2A7A'},
     {si:slotIdx(8,0),span:2,title:'🏨 그랜드하얏트 체크인',sub:'자유 시간',type:'hotel',bg:'#E5DEFA',tc:'#3B2A7A'},
+  ],
+  2:[
+    {si:slotIdx(9,0),span:2,title:'🚌 그랜드하얏트 픽업',sub:'두리두바이 · 아부다비 시티투어',type:'transit',bg:'#E0E0E0',tc:'#333'},
+    {si:slotIdx(11,30),span:4,title:'🖼️ 루브르 아부다비',sub:'사디야트 섬 · 세계적 예술 박물관 ✅',type:'activity',bg:'#FAE0D5',tc:'#8B3A1E'},
+    {si:slotIdx(13,30),span:2,title:'🍽️ 점심 식사',sub:'가이드 안내',type:'free',bg:'#FDF0D5',tc:'#7A5A1A'},
+    {si:slotIdx(14,30),span:4,title:'🏛️ 카스르 알 와탄 왕궁',sub:'아부다비 대통령궁 내부 ✅',type:'activity',bg:'#FAE0D5',tc:'#8B3A1E'},
+    {si:slotIdx(16,30),span:4,title:'🕌 셰이크 자이드 그랜드 모스크',sub:'썬셋 타임 관람 · 아부다비 랜드마크',type:'activity',bg:'#D9F0E8',tc:'#1A5E3A'},
+    {si:slotIdx(19,30),span:1,title:'🚌 투어 종료 · 드랍',sub:'가이드팁 1인 $30 현장지불 필수',type:'transit',bg:'#E0E0E0',tc:'#333'},
   ],
   3:[
     {si:slotIdx(4,0),span:1,title:'✈ EK658 탑승·출발',sub:'두바이→몰디브 04:20',type:'flight',bg:'#D6E4F7',tc:'#1A2744'},
